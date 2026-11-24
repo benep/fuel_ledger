@@ -10,6 +10,7 @@ import pytest
 from freezegun.api import FrozenDateTimeFactory
 from homeassistant.components.recorder import Recorder
 from homeassistant.core import HomeAssistant
+from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.components.recorder.common import async_wait_recording_done
 
@@ -72,3 +73,7 @@ async def test_the_recorded_days_give_the_range_at_once(
     daily = 2 * FLOW
     assert float(hass.states.get("sensor.heating_oil_range").state) == pytest.approx(900 / daily, abs=0.5)
     assert float(hass.states.get("sensor.heating_oil_consumption").state) == 0.0  # no counter moved
+    # The day the tanks run empty is a local date, so it does not move with every recalculation.
+    days = float(hass.states.get("sensor.heating_oil_range").state)
+    empty = dt_util.as_local(dt_util.utcnow() + timedelta(days=days)).date()
+    assert hass.states.get("sensor.heating_oil_empty_on").state == empty.isoformat()

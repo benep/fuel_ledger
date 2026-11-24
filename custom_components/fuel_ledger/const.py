@@ -75,7 +75,7 @@ KEY_TANK_CONTENT: Final = "content"
 
 # State attributes
 ATTR_LEVEL: Final = "level"  # engine.Level value
-ATTR_BASIS: Final = "basis"  # dict quantity -> where it comes from
+ATTR_BASIS: Final = "basis"  # prefix: basis_<quantity> -> where it comes from, one attribute each to be translatable
 ATTR_ORIGIN: Final = "origin"  # engine.Origin value of a price, heating value or factor
 ATTR_UNCERTAINTY: Final = "uncertainty"
 

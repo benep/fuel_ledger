@@ -138,8 +138,10 @@ Every result states in its attribute **Level** how it is obtained:
 | *calculated* | From known values: a measured factor, the heating value of an invoice. |
 | *estimated* | Something in it is a default: the factor 1, the heating value of 10 kWh/L, the efficiency of 90 %. |
 
-The attribute **Basis** says where each input comes from. [More accurate](more-accurate.md) shows how to move a
-number up.
+The attributes **Basis: consumption**, **factor**, **heating value** and **efficiency** say where each input comes
+from: *default*, *set*, *delivery* or *measured*. [More accurate](more-accurate.md) shows how to move a number up.
+
+![The Consumption sensor with its attributes: level estimated, and the basis of each input](assets/screenshots/attributes.png){ .screenshot }
 
 ## Nothing changes backwards
 

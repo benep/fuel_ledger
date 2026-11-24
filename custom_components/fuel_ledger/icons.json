@@ -6,6 +6,36 @@
         "state": {
           "on": "mdi:alert"
         }
+      },
+      "running_burner": {
+        "default": "mdi:fire-off",
+        "state": {
+          "on": "mdi:fire"
+        }
+      },
+      "running_preheater": {
+        "default": "mdi:heating-coil"
+      },
+      "running_circuit_pump": {
+        "default": "mdi:pump-off",
+        "state": {
+          "on": "mdi:pump"
+        }
+      },
+      "running_hot_water_pump": {
+        "default": "mdi:water-pump-off",
+        "state": {
+          "on": "mdi:water-pump"
+        }
+      },
+      "running_circulation_pump": {
+        "default": "mdi:water-sync"
+      },
+      "running_other": {
+        "default": "mdi:cog-off",
+        "state": {
+          "on": "mdi:cog"
+        }
       }
     },
     "button": {

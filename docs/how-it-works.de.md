@@ -145,8 +145,11 @@ Jedes Ergebnis sagt in seinem Attribut **Stufe**, wie es zustande kommt:
 | *berechnet* | Aus bekannten Werten: ein gemessener Faktor, der Heizwert einer Rechnung. |
 | *geschätzt* | Etwas darin ist ein Vorgabewert: der Faktor 1, der Heizwert von 10 kWh/L, der Wirkungsgrad von 90 %. |
 
-Das Attribut **Grundlage** sagt, woher jeder Eingang kommt. [Genauer machen](more-accurate.md) zeigt, wie du eine Zahl
+Die Attribute **Grundlage: Verbrauch**, **Faktor**, **Heizwert** und **Wirkungsgrad** sagen, woher jeder Eingang
+kommt: *Standard*, *Eingegeben*, *Lieferung* oder *Gemessen*. [Genauer machen](more-accurate.md) zeigt, wie du eine Zahl
 eine Stufe nach oben bringst.
+
+![Der Sensor Verbrauch mit seinen Attributen: Stufe geschätzt und die Grundlage jedes Eingangs](assets/screenshots/attributes.png){ .screenshot }
 
 ## Nichts ändert sich rückwirkend
 

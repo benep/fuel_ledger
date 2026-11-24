@@ -100,7 +100,7 @@ async def test_run_time_counter_books_consumption_energy_and_stock(hass: HomeAss
     assert value(hass, "number.heating_oil_correction_factor") == 1.25
     state = hass.states.get("sensor.heating_oil_consumption")
     assert state.attributes["level"] == "estimated"
-    assert state.attributes["basis"]["factor"] == "set"
+    assert state.attributes["basis_factor"] == "set"
     assert state.attributes["device_class"] == "gas"
     assert hass.states.get("binary_sensor.heating_oil_low_stock").state == "off"
     assert hass.states.get("sensor.heating_oil_price_per_litre").state == "unknown"
@@ -186,6 +186,7 @@ async def test_readings_give_the_measured_factor_and_the_button_applies_it(hass:
     response = await survey(33.0, 104.0)  # 13 cm, 104 L
     assert response["measured_factor"] == pytest.approx(104 / (50 * FLOW), abs=1e-3)
     assert value(hass, "sensor.heating_oil_measured_factor") == pytest.approx(104 / (50 * FLOW), abs=1e-3)
+    assert hass.states.get("sensor.heating_oil_measured_factor").attributes["state_class"] == "measurement"
 
     await hass.services.async_call(
         "button", "press", {"entity_id": "button.heating_oil_apply_measured_factor"}, blocking=True
@@ -327,6 +328,7 @@ async def test_power_input_counts_the_burner_and_confirms_a_pump_later(hass: Hom
     hass.states.async_set(POWER, "230", {"unit_of_measurement": "W"})
     await hass.async_block_till_done()
     assert hass.states.get("binary_sensor.burner").state == "on"
+    assert hass.states.get("binary_sensor.burner").attributes["device_class"] == "running"  # not "hot"
     assert value(hass, "sensor.heating_oil_flow_rate") == pytest.approx(FLOW, abs=0.01)
     freezer.tick(timedelta(minutes=30))
     hass.states.async_set(POWER, "49", {"unit_of_measurement": "W"})

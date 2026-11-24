@@ -90,7 +90,7 @@ comes from the reading accuracy and the litres per cm at each reading.
 
 Each result states `measured`, `calculated` or `estimated` (`spec.Level`), the worst of its inputs: the consumption
 (meter, measured factor, or default factor), the heating value and CO₂ (delivery or set, or default), the efficiency
-(set or default), the stock (all level sensors or calculated). `basis` lists the origin of each input.
+(set or default), the stock (all level sensors or calculated). `basis_<input>` gives the origin of each input.
 
 ## Storage
 

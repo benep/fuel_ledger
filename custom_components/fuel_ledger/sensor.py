@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -63,7 +63,7 @@ from .entity import FuelLedgerEntity, component_device, main_device, tank_device
 from .runtime import FuelLedgerRuntime
 from .texts import async_texts
 
-Value = float | datetime | None
+Value = float | date | datetime | None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -74,14 +74,20 @@ class FuelSensorDescription(SensorEntityDescription):
     unit: Callable[[str], str] | None = None  # from the currency, for prices and costs
 
 
+def _basis(ledger: Ledger) -> dict[str, str]:
+    """Where each input comes from, one attribute each (basis_factor: set), so Home Assistant translates them."""
+    return {f"{ATTR_BASIS}_{quantity}": origin for quantity, origin in ledger.basis().items()}
+
+
 def _level(level: Any) -> dict[str, Any]:
     return {ATTR_LEVEL: None if level is None else str(level)}
 
 
-def _empty(runtime: FuelLedgerRuntime) -> datetime | None:
+def _empty(runtime: FuelLedgerRuntime) -> date | None:
+    """The local day the tanks run empty: a day, so it does not move with every recalculation."""
     now = runtime.now()
     days = runtime.ledger.range_days(now)
-    return None if days is None else dt_util.utc_from_timestamp(now) + timedelta(days=days)
+    return None if days is None else dt_util.as_local(dt_util.utc_from_timestamp(now) + timedelta(days=days)).date()
 
 
 def _last_delivery(runtime: FuelLedgerRuntime) -> datetime | None:
@@ -121,7 +127,7 @@ def _counter(key: str, value: Callable[[Ledger], float], level: str, **kwargs: A
         translation_key=key,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value=lambda r: value(r.ledger),
-        attributes=lambda ledger: {**_level(getattr(ledger, level)), ATTR_BASIS: ledger.basis()},
+        attributes=lambda ledger: {**_level(getattr(ledger, level)), **_basis(ledger)},
         **kwargs,
     )
 
@@ -222,7 +228,7 @@ SENSORS: tuple[FuelSensorDescription, ...] = (
     FuelSensorDescription(
         key=KEY_EMPTY,
         translation_key=KEY_EMPTY,
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         value=_empty,
         attributes=lambda ledger: _level(ledger.range_level(ledger.time or 0.0)),
     ),
@@ -268,6 +274,7 @@ SENSORS: tuple[FuelSensorDescription, ...] = (
         key=KEY_MEASURED_FACTOR,
         translation_key=KEY_MEASURED_FACTOR,
         entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=3,
         value=_measured,
         attributes=_measured_attributes,

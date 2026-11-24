@@ -15,9 +15,6 @@ from .entity import FuelLedgerEntity, component_device, main_device
 from .runtime import FuelLedgerRuntime
 from .texts import async_texts
 
-# The burner and the preheater make heat; pumps and the rest run.
-HEATING = {ComponentKind.BURNER, ComponentKind.PREHEATER}
-
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: FuelLedgerConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback
@@ -59,8 +56,8 @@ class ComponentRunningSensor(FuelLedgerEntity, BinarySensorEntity):
         super().__init__(runtime, component_id, KEY_RUNNING, device)
         self._component_id = component_id
         kind = ComponentKind(data.get(CONF_COMPONENT_KIND, ComponentKind.OTHER))
-        self._attr_device_class = BinarySensorDeviceClass.HEAT if kind in HEATING else BinarySensorDeviceClass.RUNNING
-        self._attr_translation_key = None
+        self._attr_device_class = BinarySensorDeviceClass.RUNNING
+        self._attr_translation_key = f"running_{kind.value}"  # only for the icon; the name is the device's
 
     @property
     def is_on(self) -> bool | None:

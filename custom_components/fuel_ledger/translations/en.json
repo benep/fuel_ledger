@@ -436,8 +436,41 @@
               "estimated": "Estimated"
             }
           },
-          "basis": {
-            "name": "Basis"
+          "basis_consumption": {
+            "name": "Basis: consumption",
+            "state": {
+              "runtime": "Run time counter",
+              "meter": "Oil meter",
+              "burner": "Burner on/off",
+              "power": "Power"
+            }
+          },
+          "basis_factor": {
+            "name": "Basis: factor",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Basis: heating value",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Basis: efficiency",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
           }
         }
       },
@@ -452,8 +485,41 @@
               "estimated": "Estimated"
             }
           },
-          "basis": {
-            "name": "Basis"
+          "basis_consumption": {
+            "name": "Basis: consumption",
+            "state": {
+              "runtime": "Run time counter",
+              "meter": "Oil meter",
+              "burner": "Burner on/off",
+              "power": "Power"
+            }
+          },
+          "basis_factor": {
+            "name": "Basis: factor",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Basis: heating value",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Basis: efficiency",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
           }
         }
       },
@@ -468,8 +534,41 @@
               "estimated": "Estimated"
             }
           },
-          "basis": {
-            "name": "Basis"
+          "basis_consumption": {
+            "name": "Basis: consumption",
+            "state": {
+              "runtime": "Run time counter",
+              "meter": "Oil meter",
+              "burner": "Burner on/off",
+              "power": "Power"
+            }
+          },
+          "basis_factor": {
+            "name": "Basis: factor",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Basis: heating value",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Basis: efficiency",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
           }
         }
       },
@@ -484,8 +583,41 @@
               "estimated": "Estimated"
             }
           },
-          "basis": {
-            "name": "Basis"
+          "basis_consumption": {
+            "name": "Basis: consumption",
+            "state": {
+              "runtime": "Run time counter",
+              "meter": "Oil meter",
+              "burner": "Burner on/off",
+              "power": "Power"
+            }
+          },
+          "basis_factor": {
+            "name": "Basis: factor",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Basis: heating value",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Basis: efficiency",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
           }
         }
       },

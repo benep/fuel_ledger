@@ -16,7 +16,7 @@ starting over.
     | **Boiler efficiency** | The heat *calculated* instead of estimated | Options → Fuel and boiler |
     | **Oil meter** | The consumption *measured* | Options → Burner and nozzle |
 
-    The attribute **Level** of each sensor says where it stands, **Basis** where its inputs come from.
+    The attribute **Level** of each sensor says where it stands, the attributes **Basis** where its inputs come from.
 
 To change the options: **Settings → Devices & services → Fuel Ledger**, the gear icon :material-cog: of the entry.
 

@@ -16,7 +16,7 @@ ergänzen, ohne dass die Zähler neu anfangen.
     | **Wirkungsgrad des Kessels** | Die Wärme *berechnet* statt geschätzt | Optionen → Brennstoff und Kessel |
     | **Ölzähler** | Den Verbrauch *gemessen* | Optionen → Brenner und Düse |
 
-    Das Attribut **Stufe** jedes Sensors sagt, wo er steht, **Grundlage**, woher seine Eingänge kommen.
+    Das Attribut **Stufe** jedes Sensors sagt, wo er steht, die Attribute **Grundlage**, woher seine Eingänge kommen.
 
 So änderst du die Optionen: **Einstellungen → Geräte & Dienste → Fuel Ledger**, das Zahnrad :material-cog: des
 Eintrags.

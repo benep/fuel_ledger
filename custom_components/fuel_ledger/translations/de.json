@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Fuel Ledger",
-        "description": "Führt Buch über dein Heizöl: Verbrauch, Energie und Wärme für das Energie-Dashboard, Vorrat und Reichweite deiner Tanks, Lieferungen mit Preis, Heizwert und CO₂. Es folgen ein paar kurze Schritte: der Brenner (mit Strommesser auch, was dahinter läuft), die Düse, die Tanks. Alles lässt sich später auf der Seite der Integration ändern.\n\nIn diesen Schritten gibt es kein Zurück: Ist etwas schiefgegangen, den Dialog schließen und neu beginnen.",
+        "description": "Führt Buch über dein Heizöl: Verbrauch, Energie und Wärme für das Energie-Dashboard, Vorrat und Reichweite deiner Tanks, Lieferungen mit Preis, Heizwert und CO₂. Es folgen ein paar kurze Schritte: der Brenner (mit Leistungsmessung auch, was dahinter läuft), die Düse, die Tanks. Alles lässt sich später auf der Seite der Integration ändern.\n\nIn diesen Schritten gibt es kein Zurück: Ist etwas schiefgegangen, den Dialog schließen und neu beginnen.",
         "data": {
           "name": "Name"
         },
@@ -116,7 +116,7 @@
               "preheater_power": "Wärmt das Öl ein paar Minuten vor dem Start des Brenners.",
               "circuit_pump_power": "Treibt das Wasser durch die Heizkörper.",
               "hot_water_pump_power": "Lädt den Warmwasserspeicher.",
-              "circulation_pump_power": "Hält warmes Wasser an den Zapfstellen bereit, oft mit Zeitschaltung. Nur, wenn sie hinter dem Strommesser hängt."
+              "circulation_pump_power": "Hält warmes Wasser an den Zapfstellen bereit, oft mit Zeitschaltung. Nur, wenn sie hinter der Leistungsmessung hängt."
             }
           }
         }
@@ -345,7 +345,7 @@
       "error": {
         "name_required": "Gib einen Namen ein.",
         "not_positive": "Gib eine Zahl größer als 0 ein.",
-        "last_burner": "Das ist der einzige Brenner, und der Strommesser ist der Eingang: Ohne Brenner wird nichts gezählt. Lege erst einen anderen Brenner an."
+        "last_burner": "Das ist der einzige Brenner, und die Leistungsmessung ist der Eingang: Ohne Brenner wird nichts gezählt. Lege erst einen anderen Brenner an."
       },
       "abort": {
         "reconfigure_successful": "Gespeichert. Fuel Ledger wird mit der Änderung neu geladen."
@@ -436,8 +436,41 @@
               "estimated": "Geschätzt"
             }
           },
-          "basis": {
-            "name": "Grundlage"
+          "basis_consumption": {
+            "name": "Grundlage: Verbrauch",
+            "state": {
+              "runtime": "Laufzeitzähler",
+              "meter": "Ölzähler",
+              "burner": "Brenner an/aus",
+              "power": "Leistung"
+            }
+          },
+          "basis_factor": {
+            "name": "Grundlage: Faktor",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Grundlage: Heizwert",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Grundlage: Wirkungsgrad",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
           }
         }
       },
@@ -452,8 +485,41 @@
               "estimated": "Geschätzt"
             }
           },
-          "basis": {
-            "name": "Grundlage"
+          "basis_consumption": {
+            "name": "Grundlage: Verbrauch",
+            "state": {
+              "runtime": "Laufzeitzähler",
+              "meter": "Ölzähler",
+              "burner": "Brenner an/aus",
+              "power": "Leistung"
+            }
+          },
+          "basis_factor": {
+            "name": "Grundlage: Faktor",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Grundlage: Heizwert",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Grundlage: Wirkungsgrad",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
           }
         }
       },
@@ -468,8 +534,41 @@
               "estimated": "Geschätzt"
             }
           },
-          "basis": {
-            "name": "Grundlage"
+          "basis_consumption": {
+            "name": "Grundlage: Verbrauch",
+            "state": {
+              "runtime": "Laufzeitzähler",
+              "meter": "Ölzähler",
+              "burner": "Brenner an/aus",
+              "power": "Leistung"
+            }
+          },
+          "basis_factor": {
+            "name": "Grundlage: Faktor",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Grundlage: Heizwert",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Grundlage: Wirkungsgrad",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
           }
         }
       },
@@ -484,8 +583,41 @@
               "estimated": "Geschätzt"
             }
           },
-          "basis": {
-            "name": "Grundlage"
+          "basis_consumption": {
+            "name": "Grundlage: Verbrauch",
+            "state": {
+              "runtime": "Laufzeitzähler",
+              "meter": "Ölzähler",
+              "burner": "Brenner an/aus",
+              "power": "Leistung"
+            }
+          },
+          "basis_factor": {
+            "name": "Grundlage: Faktor",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_heating_value": {
+            "name": "Grundlage: Heizwert",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          },
+          "basis_efficiency": {
+            "name": "Grundlage: Wirkungsgrad",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
           }
         }
       },
@@ -739,7 +871,7 @@
       "message": "Der Vorrat nach der Lieferung ist kleiner als die gelieferte Menge. Prüf beide Angaben."
     },
     "no_burner": {
-      "message": "Der Strommesser ist der Eingang, aber keine Komponente ist der Brenner. Lege eine Komponente der Art Brenner an."
+      "message": "Die Leistungsmessung ist der Eingang, aber keine Komponente ist der Brenner. Lege eine Komponente der Art Brenner an."
     }
   },
   "services": {
@@ -845,7 +977,7 @@
   "issues": {
     "components_alike": {
       "title": "{entry}: Zwei Komponenten ziehen fast gleich viel Leistung",
-      "description": "Hinter dem Strommesser ziehen diese Komponenten so ähnlich viel, dass Fuel Ledger nicht erkennt, welche von beiden läuft: {pairs}.\n\nDie Summe bleibt richtig, und der Brenner wird weiter richtig gezählt, solange er nicht dabei ist. Nur welche der beiden als laufend erscheint, ist geraten.\n\nWenn dir die Laufzeit des Brenners reicht, entferne eine davon. Kennst du für jede eine genauere Leistung, trag sie mit **Komponente bearbeiten** ein."
+      "description": "Hinter der Leistungsmessung ziehen diese Komponenten so ähnlich viel, dass Fuel Ledger nicht erkennt, welche von beiden läuft: {pairs}.\n\nDie Summe bleibt richtig, und der Brenner wird weiter richtig gezählt, solange er nicht dabei ist. Nur welche der beiden als laufend erscheint, ist geraten.\n\nWenn dir die Laufzeit des Brenners reicht, entferne eine davon. Kennst du für jede eine genauere Leistung, trag sie mit **Komponente bearbeiten** ein."
     }
   }
 }

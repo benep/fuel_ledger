@@ -74,7 +74,7 @@
         },
         "data_description": {
           "tank_count": "0 or empty capacity: no tanks, only the stock.",
-          "capacity": "Litres per tank.",
+          "capacity": "Litres per tank, as on the type plate.",
           "stock": "All tanks together, in litres. Empty: the stock starts with the next delivery. Price and heating value of what is in the tanks can be entered with the action \"Set stock\".",
           "link": "At the bottom: the levels are always the same, one reading tells all. Only through their suction pipes (T-piece): each tank keeps its own level, the burner draws from the fuller one first."
         },
@@ -138,7 +138,7 @@
     "step": {
       "init": {
         "title": "Fuel Ledger",
-        "description": "Tanks are edited on the integration page, each through its own entry. The correction factor is an entity of its own.",
+        "description": "Tanks and components are edited on the integration page, each through its own entry. The correction factor is an entity of its own.",
         "menu_options": {
           "burner": "Burner and nozzle",
           "fuel": "Fuel and boiler",
@@ -261,8 +261,8 @@
             "shape": "Shape"
           },
           "data_description": {
-            "capacity": "Litres.",
-            "shape": "Upright walls: litres per cm below. A steel tank on its side and a manufacturer's table ask for their values in the next step."
+            "capacity": "Litres, as on the type plate.",
+            "shape": "Upright walls: litres per cm under More accurate. A steel tank on its side and a manufacturer's table ask for their values in the next step."
           },
           "sections": {
             "accuracy": {

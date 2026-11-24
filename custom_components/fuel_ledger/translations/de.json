@@ -68,13 +68,13 @@
         "description": "Die Tanks geben dem Vorrat seinen Füllgrad und den Peilungen ihre Liter. Mehrere gleich große Tanks werden auf einmal angelegt (Batterietanks); weitere, auch in anderer Form, lassen sich später auf der Seite der Integration hinzufügen.",
         "data": {
           "tank_count": "Anzahl Tanks",
-          "capacity": "Inhalt je Tank",
+          "capacity": "Fassungsvermögen je Tank",
           "stock": "Jetzt in den Tanks",
           "link": "Mehrere Tanks sind verbunden"
         },
         "data_description": {
-          "tank_count": "0 oder leerer Inhalt: keine Tanks, nur der Vorrat.",
-          "capacity": "Liter je Tank.",
+          "tank_count": "0 oder kein Fassungsvermögen: keine Tanks, nur der Vorrat.",
+          "capacity": "Liter je Tank, wie auf dem Typenschild.",
           "stock": "Alle Tanks zusammen, in Litern. Leer: Der Vorrat beginnt mit der nächsten Lieferung. Preis und Heizwert des Öls in den Tanks trägst du mit der Aktion „Vorrat setzen“ ein.",
           "link": "Unten: Die Pegel stehen immer gleich, eine Peilung gilt für alle. Nur über die Saugleitungen (T-Stück): Jeder Tank hat seinen eigenen Pegel, der Brenner saugt zuerst aus dem volleren."
         },
@@ -138,7 +138,7 @@
     "step": {
       "init": {
         "title": "Fuel Ledger",
-        "description": "Tanks bearbeitest du auf der Seite der Integration, jeden über seinen eigenen Eintrag. Der Korrekturfaktor ist eine eigene Entität.",
+        "description": "Tanks und Komponenten bearbeitest du auf der Seite der Integration, jeden über seinen eigenen Eintrag. Der Korrekturfaktor ist eine eigene Entität.",
         "menu_options": {
           "burner": "Brenner und Düse",
           "fuel": "Brennstoff und Kessel",
@@ -257,12 +257,12 @@
           "description": "Peilungen mit Peilstab oder Zollstock trägst du je Tank mit der Aktion „Pegel eintragen“ ein. Mehrere Tanks an einer Saugleitung zählen zusammen.",
           "data": {
             "name": "Name",
-            "capacity": "Inhalt",
+            "capacity": "Fassungsvermögen",
             "shape": "Form"
           },
           "data_description": {
-            "capacity": "Liter.",
-            "shape": "Senkrechte Wände: Liter pro cm unten. Ein liegender Stahltank und eine Peiltabelle fragen ihre Werte im nächsten Schritt ab."
+            "capacity": "Liter, wie auf dem Typenschild.",
+            "shape": "Senkrechte Wände: Liter pro cm unter „Genauer“. Ein liegender Stahltank und eine Peiltabelle fragen ihre Werte im nächsten Schritt ab."
           },
           "sections": {
             "accuracy": {

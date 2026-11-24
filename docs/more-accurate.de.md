@@ -44,7 +44,7 @@ Fuel Ledger 10,0 kWh pro Liter an (den Heizwert von Heizöl).
 ## Tanks anderer Form
 
 Tanks mit senkrechten Wänden (Batterietanks aus Kunststoff, die meisten Kellertanks) brauchen nur die **Liter pro
-cm**: ihre Grundfläche in m² × 10, oder den Inhalt geteilt durch die Höhe. Zwei weitere Formen, gewählt in **Tank
+cm**: ihre Grundfläche in m² × 10, oder das Fassungsvermögen geteilt durch die Höhe. Zwei weitere Formen, gewählt in **Tank
 hinzufügen** oder **Tank bearbeiten**:
 
 | Form | Fragt nach |

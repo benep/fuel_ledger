@@ -115,7 +115,7 @@ Unter **Genauer**:
 | Feld | Was du einträgst |
 |---|---|
 | **Anzahl Tanks** | 0, wenn du die Tanks nicht verfolgen willst, nur den Vorrat. |
-| **Inhalt je Tank** | Liter. Mehrere gleich große Tanks werden auf einmal angelegt. |
+| **Fassungsvermögen je Tank** | Liter. Mehrere gleich große Tanks werden auf einmal angelegt. |
 | **Mehrere Tanks sind verbunden** | **Unten verbunden**: Batterietanks mit Verbindungsleitung. **Nur über die Saugleitungen (T-Stück)**: Jeder Tank behält seinen eigenen Pegel. Siehe [So funktioniert es](how-it-works.md#tanks). |
 | **Jetzt in den Tanks** | Alle Tanks zusammen, in Litern, falls du es weißt. Leer: Der Vorrat beginnt mit der nächsten Lieferung oder sobald jeder Tank gepeilt ist. |
 

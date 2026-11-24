@@ -1,0 +1,14 @@
+{
+  "domain": "fuel_ledger",
+  "name": "Fuel Ledger",
+  "after_dependencies": ["recorder"],
+  "codeowners": ["@benep"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/benep/fuel_ledger",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/benep/fuel_ledger/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

@@ -1,0 +1,635 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fuel Ledger",
+        "description": "Keeps the books for your heating oil: consumption, energy and heat for the Energy dashboard, stock and range of your tanks, deliveries with their price, heating value and CO₂. Three short steps follow: burner, nozzle, tanks. Everything can be changed later on the integration page.\n\nThere is no back button in these steps: if something went wrong, close the dialog and start again.",
+        "data": {
+          "name": "Name"
+        },
+        "data_description": {
+          "name": "Name of the fuel store, e.g. heating oil."
+        }
+      },
+      "burner": {
+        "title": "Burner",
+        "description": "Where does the consumption come from? One of these, from best to roughest:\n\n- **Oil meter:** a meter reading in L or m³. It measures, nothing is calculated.\n- **Burner run time:** a counter in hours (or minutes, seconds) from the boiler or a smart plug script. Keeps counting while Home Assistant is down.\n- **Burner on/off:** a binary sensor on while the burner runs. Fuel Ledger counts the run time itself.\n- **Power of the heating:** a smart plug or meter in front of the boiler (W). Fuel Ledger recognises the burner in it, and the pumps if you tell their power.",
+        "data": {
+          "entity_id": "Consumption input"
+        },
+        "data_description": {
+          "entity_id": "Oil meter, run time counter or binary sensor of the burner."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "More accurate",
+            "data": {
+              "power_entity_id": "Power meter of the heating"
+            },
+            "data_description": {
+              "power_entity_id": "Besides a run time counter or meter: the power of the heating in W. Fuel Ledger recognises in it whether the burner, the oil preheater and the pumps run, each as a sensor of its own."
+            }
+          }
+        }
+      },
+      "nozzle": {
+        "title": "Nozzle",
+        "description": "The consumption is run time × nozzle throughput × correction factor. The nozzle is stamped on it (e.g. 0.50 GPH 60°) and usually in the maintenance record.",
+        "data": {
+          "nozzle_gph": "Nozzle",
+          "factor": "Correction factor"
+        },
+        "data_description": {
+          "nozzle_gph": "Throughput in US gallons per hour, as stamped on the nozzle.",
+          "factor": "Empty: 1. Corrects what the nozzle and the pressure leave out. Can be changed later and measured from dipstick readings."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "More accurate",
+            "data": {
+              "nominal_flow": "Throughput",
+              "pump_pressure": "Pump pressure",
+              "test_pressure": "Test pressure of the nozzle",
+              "burner_entity_id": "Burner on/off",
+              "prepurge_s": "Prepurge"
+            },
+            "data_description": {
+              "nominal_flow": "Litres per hour, if you know it instead of the nozzle (replaces it).",
+              "pump_pressure": "The pressure of the oil pump, from the maintenance record or the gauge. A higher pressure burns more.",
+              "test_pressure": "The pressure the nozzle is rated at. Empty: 7 bar (100 psi).",
+              "burner_entity_id": "On while the burner runs: gives a live flow rate for the Energy dashboard.",
+              "prepurge_s": "Seconds after each start in which the fan runs but no oil burns. Taken off every start."
+            }
+          }
+        }
+      },
+      "tanks": {
+        "title": "Tanks",
+        "description": "Your tanks give the stock its fill level and the readings with a dipstick their litres. Several tanks of the same size are created at once (battery tanks); others can be added later on the integration page, also tanks of another shape.",
+        "data": {
+          "tank_count": "Number of tanks",
+          "capacity": "Capacity of each tank",
+          "stock": "In the tanks now",
+          "link": "Several tanks are connected"
+        },
+        "data_description": {
+          "tank_count": "0 or empty capacity: no tanks, only the stock.",
+          "capacity": "Litres per tank.",
+          "stock": "All tanks together, in litres. Empty: the stock starts with the next delivery. Price and heating value of what is in the tanks can be entered with the action \"Set stock\".",
+          "link": "At the bottom: the levels are always the same, one reading tells all. Only through their suction pipes (T-piece): each tank keeps its own level, the burner draws from the fuller one first."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "More accurate",
+            "data": {
+              "per_cm": "Litres per cm",
+              "residue": "Residue per tank"
+            },
+            "data_description": {
+              "per_cm": "For readings in cm: litres per cm of height of one tank (its base area in m² × 10).",
+              "residue": "Litres at the bottom the burner cannot draw. The range ends there."
+            }
+          }
+        }
+      },
+      "components": {
+        "title": "Behind the power meter",
+        "description": "What runs behind the power meter, each with its typical power. The burner is enough to count its run time; with the others, each pump gets a sensor of its own. Read the powers from the meter's history: the power with only the circuit pump running, with the burner running, and so on. More components can be added later on the integration page.",
+        "data": {
+          "burner_power": "Burner"
+        },
+        "data_description": {
+          "burner_power": "Watts while the burner runs (fan, oil pump, ignition), without the pumps."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "More accurate",
+            "data": {
+              "base_power": "Base load",
+              "preheater_power": "Oil preheater",
+              "circuit_pump_power": "Heating circuit pump",
+              "hot_water_pump_power": "Hot water pump"
+            },
+            "data_description": {
+              "base_power": "What the boiler's control draws all the time.",
+              "preheater_power": "Warms the oil for a few minutes before the burner starts.",
+              "circuit_pump_power": "Moves the water through the radiators.",
+              "hot_water_pump_power": "Charges the hot water tank."
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "name_required": "Enter a name.",
+      "not_positive": "Enter a number greater than 0.",
+      "entity_not_found": "Entity not found.",
+      "not_an_input": "Choose an oil meter (L, m³), a run time counter (h, min, s), a binary sensor or a power sensor (W).",
+      "not_cumulative": "Choose a meter reading, not a momentary value.",
+      "nozzle_required": "Enter the nozzle, or its throughput under \"More accurate\".",
+      "too_many_tanks": "At most 10 tanks at once.",
+      "not_power": "Choose a power sensor in W or kW.",
+      "burner_required": "Enter the power of the burner: it is how the burner is recognised."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fuel Ledger",
+        "description": "Tanks are edited on the integration page, each through its own entry. The correction factor is an entity of its own.",
+        "menu_options": {
+          "burner": "Burner and nozzle",
+          "fuel": "Fuel and boiler",
+          "stock": "Stock and range",
+          "power": "Power meter"
+        }
+      },
+      "burner": {
+        "title": "Burner",
+        "description": "Oil meter, run time counter, binary sensor or power of the burner. Another one starts counting from its next reading; what was booked stays.",
+        "data": {
+          "entity_id": "Consumption input"
+        },
+        "sections": {
+          "accuracy": {
+            "name": "More accurate",
+            "data": {
+              "power_entity_id": "Power meter of the heating"
+            },
+            "data_description": {
+              "power_entity_id": "Besides a run time counter or meter: the power of the heating in W. The components behind it are entries on the integration page."
+            }
+          }
+        }
+      },
+      "nozzle": {
+        "title": "Nozzle",
+        "description": "Changes count from now on; what was booked stays.",
+        "data": {
+          "nozzle_gph": "Nozzle"
+        },
+        "data_description": {
+          "nozzle_gph": "Throughput in US gallons per hour, as stamped on the nozzle."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "More accurate",
+            "data": {
+              "nominal_flow": "Throughput",
+              "pump_pressure": "Pump pressure",
+              "test_pressure": "Test pressure of the nozzle",
+              "burner_entity_id": "Burner on/off",
+              "prepurge_s": "Prepurge"
+            },
+            "data_description": {
+              "nominal_flow": "Litres per hour, if you know it instead of the nozzle (replaces it).",
+              "pump_pressure": "The pressure of the oil pump, from the maintenance record or the gauge.",
+              "test_pressure": "The pressure the nozzle is rated at. Empty: 7 bar (100 psi).",
+              "burner_entity_id": "On while the burner runs: gives a live flow rate.",
+              "prepurge_s": "Seconds after each start in which no oil burns."
+            }
+          }
+        }
+      },
+      "fuel": {
+        "title": "Fuel and boiler",
+        "description": "Changes count from now on; what was booked stays. Deliveries with an invoice set heating value and CO₂ of the oil in the tanks themselves.",
+        "data": {
+          "efficiency": "Boiler efficiency",
+          "heating_value": "Heating value",
+          "co2": "CO₂ factor"
+        },
+        "data_description": {
+          "efficiency": "Heat per energy in the fuel, e.g. 0.9. The chimney sweep's flue gas measurement gives a good value. Empty: 0.9.",
+          "heating_value": "kWh per litre of oil of unknown origin, until a delivery tells it. Empty: 10.0 (net calorific value of heating oil). Use the gross value (about 10.6) to compare with gas bills.",
+          "co2": "kg CO₂ per litre of oil of unknown origin. Empty: 2.66."
+        }
+      },
+      "stock": {
+        "title": "Stock and range",
+        "data": {
+          "low_percent": "Low below",
+          "range_days": "Range from the last",
+          "reading_accuracy_cm": "Reading accuracy",
+          "link": "Several tanks are connected"
+        },
+        "data_description": {
+          "low_percent": "The low stock sensor turns on when the usable stock is at or below this share of the capacity.",
+          "range_days": "Days of consumption the range is calculated from.",
+          "reading_accuracy_cm": "How exactly you read the level, ± cm. Gives the uncertainty of the measured factor.",
+          "link": "At the bottom: the levels are always the same, one reading tells all. Only through their suction pipes (T-piece): each tank keeps its own level, the burner draws from the fuller one first."
+        }
+      },
+      "power": {
+        "title": "Power meter",
+        "description": "The components behind the power meter (burner, pumps) are entries on the integration page, each with its typical power.",
+        "data": {
+          "base_power": "Base load"
+        },
+        "data_description": {
+          "base_power": "What the boiler's control draws all the time, in W."
+        }
+      }
+    },
+    "error": {
+      "not_positive": "Enter a number greater than 0.",
+      "entity_not_found": "Entity not found.",
+      "not_an_input": "Choose an oil meter (L, m³), a run time counter (h, min, s), a binary sensor or a power sensor (W).",
+      "not_cumulative": "Choose a meter reading, not a momentary value.",
+      "nozzle_required": "Enter the nozzle, or its throughput under \"More accurate\".",
+      "efficiency_range": "The efficiency is a factor such as 0.9, not a percentage.",
+      "not_power": "Choose a power sensor in W or kW.",
+      "burner_required": "The power as input needs a burner among the components: add it on the integration page first."
+    }
+  },
+  "config_subentries": {
+    "tank": {
+      "entry_type": "Tank",
+      "initiate_flow": {
+        "user": "Add tank",
+        "reconfigure": "Edit tank"
+      },
+      "step": {
+        "tank": {
+          "title": "Tank",
+          "description": "Readings with a dipstick or a ruler are entered per tank with the action \"Record level\". Several tanks on one suction line count together.",
+          "data": {
+            "name": "Name",
+            "capacity": "Capacity",
+            "shape": "Shape"
+          },
+          "data_description": {
+            "capacity": "Litres.",
+            "shape": "Upright walls: litres per cm below. A steel tank on its side and a manufacturer's table ask for their values in the next step."
+          },
+          "sections": {
+            "accuracy": {
+              "name": "More accurate",
+              "data": {
+                "per_cm": "Litres per cm",
+                "offset_cm": "Empty at",
+                "residue": "Residue",
+                "level_entity_id": "Level sensor"
+              },
+              "data_description": {
+                "per_cm": "Upright walls only: litres per cm of height (base area in m² × 10).",
+                "offset_cm": "The reading in cm when the tank is empty, if you measure from the floor: the bottom of the tank, or what it stands on.",
+                "residue": "Litres at the bottom the burner cannot draw.",
+                "level_entity_id": "A sensor of the fill level in cm, L or %. With one on every tank, the stock is measured instead of calculated."
+              }
+            }
+          }
+        },
+        "cylinder": {
+          "title": "Steel tank on its side",
+          "data": {
+            "diameter_cm": "Inner diameter",
+            "length_cm": "Inner length"
+          }
+        },
+        "table": {
+          "title": "Table of the manufacturer",
+          "description": "One pair per line: height in cm and litres, e.g. `10: 95`. Between them it is interpolated.",
+          "data": {
+            "table": "Table"
+          }
+        }
+      },
+      "error": {
+        "name_required": "Enter a name.",
+        "not_positive": "Enter a number greater than 0.",
+        "entity_not_found": "Entity not found.",
+        "not_a_level": "Choose a sensor in cm, L or %.",
+        "level_needs_dimensions": "A level in cm needs the litres per cm (or another shape).",
+        "invalid_table": "One pair of numbers per line, with different heights."
+      },
+      "abort": {
+        "reconfigure_successful": "Saved. Fuel Ledger is reloaded with the change."
+      }
+    },
+    "component": {
+      "entry_type": "Component",
+      "initiate_flow": {
+        "user": "Add component",
+        "reconfigure": "Edit component"
+      },
+      "step": {
+        "component": {
+          "title": "Component behind the power meter",
+          "description": "Fuel Ledger finds the combination of components whose typical powers add up closest to the measured power. Each component gets a sensor whether it runs and one for its power.",
+          "data": {
+            "name": "Name",
+            "component_kind": "Kind",
+            "power": "Typical power"
+          },
+          "data_description": {
+            "power": "Watts while it runs, without the others."
+          },
+          "sections": {
+            "accuracy": {
+              "name": "More accurate",
+              "data": {
+                "on_delay_s": "Running after",
+                "off_delay_s": "Stopped after"
+              },
+              "data_description": {
+                "on_delay_s": "Seconds it has to show before it counts as running. Keeps a short peak (the ignition) from being taken for a pump. Empty: 60 for pumps, 0 for the rest.",
+                "off_delay_s": "Seconds it has to be gone before it counts as stopped. Empty: 120 for pumps, 0 for the rest."
+              }
+            }
+          }
+        }
+      },
+      "error": {
+        "name_required": "Enter a name.",
+        "not_positive": "Enter a number greater than 0."
+      },
+      "abort": {
+        "reconfigure_successful": "Saved. Fuel Ledger is reloaded with the change."
+      }
+    }
+  },
+  "selector": {
+    "shape": {
+      "options": {
+        "linear": "Upright walls (battery tank, cuboid)",
+        "horizontal_cylinder": "Cylinder on its side (steel tank)",
+        "table": "Table of the manufacturer"
+      }
+    },
+    "link": {
+      "options": {
+        "suction": "Only through their suction pipes (T-piece)",
+        "bottom": "At the bottom (communicating)"
+      }
+    },
+    "component_kind": {
+      "options": {
+        "burner": "Burner",
+        "preheater": "Oil preheater",
+        "circuit_pump": "Heating circuit pump",
+        "hot_water_pump": "Hot water pump",
+        "other": "Other"
+      }
+    }
+  },
+  "device": {
+    "heating_oil": {
+      "name": "Heating oil"
+    },
+    "tank": {
+      "name": "Tank"
+    },
+    "component_burner": {
+      "name": "Burner"
+    },
+    "component_preheater": {
+      "name": "Oil preheater"
+    },
+    "component_circuit_pump": {
+      "name": "Heating circuit pump"
+    },
+    "component_hot_water_pump": {
+      "name": "Hot water pump"
+    },
+    "component_other": {
+      "name": "Component"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "low": {
+        "name": "Low stock"
+      }
+    },
+    "button": {
+      "apply_measured_factor": {
+        "name": "Apply measured factor"
+      }
+    },
+    "number": {
+      "factor": {
+        "name": "Correction factor",
+        "state_attributes": {
+          "origin": {
+            "name": "Origin"
+          }
+        }
+      }
+    },
+    "sensor": {
+      "consumption": {
+        "name": "Consumption"
+      },
+      "energy": {
+        "name": "Energy"
+      },
+      "heat": {
+        "name": "Heat"
+      },
+      "co2": {
+        "name": "CO₂"
+      },
+      "cost": {
+        "name": "Cost"
+      },
+      "runtime": {
+        "name": "Burner run time"
+      },
+      "flow": {
+        "name": "Flow rate"
+      },
+      "stock": {
+        "name": "Stock"
+      },
+      "fill": {
+        "name": "Fill level"
+      },
+      "range": {
+        "name": "Range"
+      },
+      "empty": {
+        "name": "Empty on"
+      },
+      "price": {
+        "name": "Price per litre"
+      },
+      "price_energy": {
+        "name": "Price per kWh"
+      },
+      "heating_value": {
+        "name": "Heating value"
+      },
+      "co2_factor": {
+        "name": "CO₂ factor"
+      },
+      "measured_factor": {
+        "name": "Measured factor"
+      },
+      "last_delivery": {
+        "name": "Last delivery"
+      },
+      "last_reading": {
+        "name": "Last reading"
+      },
+      "content": {
+        "name": "Content"
+      },
+      "level": {
+        "name": "Level"
+      },
+      "power": {
+        "name": "Power"
+      }
+    }
+  },
+  "exceptions": {
+    "entry_not_found": {
+      "message": "No Fuel Ledger entry with this ID."
+    },
+    "entry_not_loaded": {
+      "message": "This Fuel Ledger entry is not loaded."
+    },
+    "not_a_tank": {
+      "message": "Choose the device of a tank of Fuel Ledger."
+    },
+    "no_measured_factor": {
+      "message": "There is no measured factor yet: it needs two readings of all tanks at the same points, with the burner running in between."
+    },
+    "amount_or_level": {
+      "message": "Enter the amount delivered, the stock after the delivery, or both."
+    },
+    "not_positive": {
+      "message": "Enter numbers greater than 0."
+    },
+    "stock_unknown": {
+      "message": "The stock before the delivery is unknown: enter the stock after it as well."
+    },
+    "level_below_stock": {
+      "message": "The stock after the delivery is below the calculated stock before it ({stock} L). Enter the amount delivered as well."
+    },
+    "amount_needed": {
+      "message": "Price, energy and CO₂ of the invoice need the amount delivered: the stock before the delivery is unknown."
+    },
+    "in_future": {
+      "message": "The time is in the future."
+    },
+    "before_last_event": {
+      "message": "The time is before the last delivery or stock correction."
+    },
+    "too_early": {
+      "message": "The time is before Fuel Ledger started counting: there is no consumption for it."
+    },
+    "tank_not_found": {
+      "message": "This tank does not exist."
+    },
+    "height_or_volume": {
+      "message": "Enter the level in cm or in litres, one of them."
+    },
+    "point_required": {
+      "message": "Enter where you measured."
+    },
+    "tank_without_dimensions": {
+      "message": "{tank} has no dimensions to turn cm into litres: add litres per cm, or enter the reading in litres."
+    }
+  },
+  "services": {
+    "record_delivery": {
+      "name": "Record delivery",
+      "description": "A delivery of oil: sets the stock and blends price, heating value and CO₂ with what was left in the tanks. Enter the totals as on the invoice.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fuel Ledger",
+          "description": "The fuel store."
+        },
+        "amount": {
+          "name": "Amount",
+          "description": "Litres delivered."
+        },
+        "level_after": {
+          "name": "Stock after",
+          "description": "Litres in all tanks after the delivery. With the amount as well, the rest before it is corrected."
+        },
+        "total_price": {
+          "name": "Invoice total",
+          "description": "Gross amount of the invoice."
+        },
+        "energy": {
+          "name": "Energy content",
+          "description": "kWh, as on the invoice (in Germany required by the CO2KostAufG)."
+        },
+        "co2": {
+          "name": "CO₂",
+          "description": "kg CO₂, as on the invoice."
+        },
+        "product": {
+          "name": "Product",
+          "description": "E.g. heating oil EL low sulphur."
+        },
+        "supplier": {
+          "name": "Supplier"
+        },
+        "time": {
+          "name": "Time",
+          "description": "When the oil was delivered. Empty: now. The new values count from the moment it is entered."
+        }
+      }
+    },
+    "record_level": {
+      "name": "Record level",
+      "description": "A reading of one tank with a dipstick or a ruler. Read all tanks one after the other: two such readings with the burner running in between give the measured factor.",
+      "fields": {
+        "device_id": {
+          "name": "Tank",
+          "description": "The device of the tank."
+        },
+        "level": {
+          "name": "Level",
+          "description": "Height in cm."
+        },
+        "volume": {
+          "name": "Litres",
+          "description": "Instead of the height, if you read litres."
+        },
+        "point": {
+          "name": "Measuring point",
+          "description": "Where you measured, e.g. front middle. Only readings at the same point are compared."
+        },
+        "time": {
+          "name": "Time",
+          "description": "Empty: now."
+        }
+      }
+    },
+    "set_stock": {
+      "name": "Set stock",
+      "description": "Correct the stock without a delivery, e.g. to start with what is in the tanks, with price, heating value and CO₂ of that oil.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fuel Ledger",
+          "description": "The fuel store."
+        },
+        "volume": {
+          "name": "Stock",
+          "description": "Litres in all tanks."
+        },
+        "price": {
+          "name": "Price per litre",
+          "description": "Of the oil in the tanks. Empty: unchanged."
+        },
+        "heating_value": {
+          "name": "Heating value",
+          "description": "kWh per litre. Empty: unchanged."
+        },
+        "co2": {
+          "name": "CO₂ factor",
+          "description": "kg per litre. Empty: unchanged."
+        },
+        "time": {
+          "name": "Time",
+          "description": "Empty: now."
+        }
+      }
+    }
+  }
+}

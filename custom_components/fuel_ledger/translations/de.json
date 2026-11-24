@@ -1,0 +1,635 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fuel Ledger",
+        "description": "Führt Buch über dein Heizöl: Verbrauch, Energie und Wärme für das Energie-Dashboard, Vorrat und Reichweite deiner Tanks, Lieferungen mit Preis, Heizwert und CO₂. Es folgen drei kurze Schritte: Brenner, Düse, Tanks. Alles lässt sich später auf der Seite der Integration ändern.\n\nIn diesen Schritten gibt es kein Zurück: Ist etwas schiefgegangen, den Dialog schließen und neu beginnen.",
+        "data": {
+          "name": "Name"
+        },
+        "data_description": {
+          "name": "Name des Vorrats, z. B. Heizöl."
+        }
+      },
+      "burner": {
+        "title": "Brenner",
+        "description": "Woher kommt der Verbrauch? Eins davon, vom besten zum gröbsten:\n\n- **Ölzähler:** ein Zählerstand in L oder m³. Er misst, gerechnet wird nichts.\n- **Brennerlaufzeit:** ein Zähler in Stunden (oder Minuten, Sekunden) vom Kessel oder einem Skript auf einer Messsteckdose. Zählt weiter, auch wenn Home Assistant nicht läuft.\n- **Brenner an/aus:** ein Binärsensor, der an ist, solange der Brenner läuft. Fuel Ledger zählt die Laufzeit selbst.\n- **Leistung der Heizung:** eine Messsteckdose oder ein Zähler vor dem Kessel (W). Fuel Ledger erkennt darin den Brenner, und die Pumpen, wenn du ihre Leistung angibst.",
+        "data": {
+          "entity_id": "Eingang für den Verbrauch"
+        },
+        "data_description": {
+          "entity_id": "Ölzähler, Laufzeitzähler oder Binärsensor des Brenners."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "Genauer",
+            "data": {
+              "power_entity_id": "Leistungsmessung der Heizung"
+            },
+            "data_description": {
+              "power_entity_id": "Neben einem Laufzeitzähler oder Ölzähler: die Leistung der Heizung in W. Fuel Ledger erkennt darin, ob Brenner, Ölvorwärmung und Pumpen laufen, jeweils als eigener Sensor."
+            }
+          }
+        }
+      },
+      "nozzle": {
+        "title": "Düse",
+        "description": "Der Verbrauch ist Laufzeit × Durchsatz der Düse × Korrekturfaktor. Die Düse ist aufgedruckt (z. B. 0,50 GPH 60°) und steht meist im Wartungsprotokoll.",
+        "data": {
+          "nozzle_gph": "Düse",
+          "factor": "Korrekturfaktor"
+        },
+        "data_description": {
+          "nozzle_gph": "Durchsatz in US-Gallonen pro Stunde, wie auf der Düse aufgedruckt.",
+          "factor": "Leer: 1. Korrigiert, was Düse und Druck nicht erfassen. Lässt sich später ändern und aus Peilungen messen."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "Genauer",
+            "data": {
+              "nominal_flow": "Durchsatz",
+              "pump_pressure": "Pumpendruck",
+              "test_pressure": "Prüfdruck der Düse",
+              "burner_entity_id": "Brenner an/aus",
+              "prepurge_s": "Vorbelüftung"
+            },
+            "data_description": {
+              "nominal_flow": "Liter pro Stunde, falls du das statt der Düse kennst (ersetzt sie).",
+              "pump_pressure": "Druck der Ölpumpe, aus dem Wartungsprotokoll oder vom Manometer. Höherer Druck verbrennt mehr.",
+              "test_pressure": "Der Druck, für den die Düse angegeben ist. Leer: 7 bar (100 psi).",
+              "burner_entity_id": "An, solange der Brenner läuft: ergibt einen Live-Durchfluss für das Energie-Dashboard.",
+              "prepurge_s": "Sekunden nach jedem Start, in denen das Gebläse läuft, aber kein Öl brennt. Wird bei jedem Start abgezogen."
+            }
+          }
+        }
+      },
+      "tanks": {
+        "title": "Tanks",
+        "description": "Die Tanks geben dem Vorrat seinen Füllgrad und den Peilungen ihre Liter. Mehrere gleich große Tanks werden auf einmal angelegt (Batterietanks); weitere, auch in anderer Form, lassen sich später auf der Seite der Integration hinzufügen.",
+        "data": {
+          "tank_count": "Anzahl Tanks",
+          "capacity": "Inhalt je Tank",
+          "stock": "Jetzt in den Tanks",
+          "link": "Mehrere Tanks sind verbunden"
+        },
+        "data_description": {
+          "tank_count": "0 oder leerer Inhalt: keine Tanks, nur der Vorrat.",
+          "capacity": "Liter je Tank.",
+          "stock": "Alle Tanks zusammen, in Litern. Leer: Der Vorrat beginnt mit der nächsten Lieferung. Preis und Heizwert des Öls in den Tanks trägst du mit der Aktion „Vorrat setzen“ ein.",
+          "link": "Unten: Die Pegel stehen immer gleich, eine Peilung gilt für alle. Nur über die Saugleitungen (T-Stück): Jeder Tank hat seinen eigenen Pegel, der Brenner saugt zuerst aus dem volleren."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "Genauer",
+            "data": {
+              "per_cm": "Liter pro cm",
+              "residue": "Bodenrest je Tank"
+            },
+            "data_description": {
+              "per_cm": "Für Peilungen in cm: Liter pro cm Höhe eines Tanks (Grundfläche in m² × 10).",
+              "residue": "Liter am Boden, die der Brenner nicht ansaugen kann. Dort endet die Reichweite."
+            }
+          }
+        }
+      },
+      "components": {
+        "title": "Hinter der Leistungsmessung",
+        "description": "Was hinter der Leistungsmessung läuft, jeweils mit seiner typischen Leistung. Der Brenner genügt, um seine Laufzeit zu zählen; mit den übrigen bekommt jede Pumpe einen eigenen Sensor. Die Werte liest du im Verlauf der Messung ab: die Leistung, wenn nur die Heizkreispumpe läuft, wenn der Brenner läuft, und so weiter. Weitere Komponenten lassen sich später auf der Seite der Integration hinzufügen.",
+        "data": {
+          "burner_power": "Brenner"
+        },
+        "data_description": {
+          "burner_power": "Watt, solange der Brenner läuft (Gebläse, Ölpumpe, Zündung), ohne die Pumpen."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "Genauer",
+            "data": {
+              "base_power": "Grundlast",
+              "preheater_power": "Ölvorwärmung",
+              "circuit_pump_power": "Heizkreispumpe",
+              "hot_water_pump_power": "Warmwasserpumpe"
+            },
+            "data_description": {
+              "base_power": "Was die Kesselregelung dauernd zieht.",
+              "preheater_power": "Wärmt das Öl ein paar Minuten vor dem Start des Brenners.",
+              "circuit_pump_power": "Treibt das Wasser durch die Heizkörper.",
+              "hot_water_pump_power": "Lädt den Warmwasserspeicher."
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "name_required": "Gib einen Namen ein.",
+      "not_positive": "Gib eine Zahl größer als 0 ein.",
+      "entity_not_found": "Entität nicht gefunden.",
+      "not_an_input": "Wähle einen Ölzähler (L, m³), einen Laufzeitzähler (h, min, s), einen Binärsensor oder einen Leistungssensor (W).",
+      "not_cumulative": "Wähle einen Zählerstand, keinen Momentanwert.",
+      "nozzle_required": "Gib die Düse ein, oder ihren Durchsatz unter „Genauer“.",
+      "too_many_tanks": "Höchstens 10 Tanks auf einmal.",
+      "not_power": "Wähle einen Leistungssensor in W oder kW.",
+      "burner_required": "Gib die Leistung des Brenners ein: Daran wird der Brenner erkannt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fuel Ledger",
+        "description": "Tanks bearbeitest du auf der Seite der Integration, jeden über seinen eigenen Eintrag. Der Korrekturfaktor ist eine eigene Entität.",
+        "menu_options": {
+          "burner": "Brenner und Düse",
+          "fuel": "Brennstoff und Kessel",
+          "stock": "Vorrat und Reichweite",
+          "power": "Leistungsmessung"
+        }
+      },
+      "burner": {
+        "title": "Brenner",
+        "description": "Ölzähler, Laufzeitzähler, Binärsensor oder Leistung des Brenners. Ein anderer zählt ab seinem nächsten Wert; was gebucht ist, bleibt.",
+        "data": {
+          "entity_id": "Eingang für den Verbrauch"
+        },
+        "sections": {
+          "accuracy": {
+            "name": "Genauer",
+            "data": {
+              "power_entity_id": "Leistungsmessung der Heizung"
+            },
+            "data_description": {
+              "power_entity_id": "Neben einem Laufzeitzähler oder Ölzähler: die Leistung der Heizung in W. Die Komponenten dahinter sind Einträge auf der Seite der Integration."
+            }
+          }
+        }
+      },
+      "nozzle": {
+        "title": "Düse",
+        "description": "Änderungen gelten ab jetzt; was gebucht ist, bleibt.",
+        "data": {
+          "nozzle_gph": "Düse"
+        },
+        "data_description": {
+          "nozzle_gph": "Durchsatz in US-Gallonen pro Stunde, wie auf der Düse aufgedruckt."
+        },
+        "sections": {
+          "accuracy": {
+            "name": "Genauer",
+            "data": {
+              "nominal_flow": "Durchsatz",
+              "pump_pressure": "Pumpendruck",
+              "test_pressure": "Prüfdruck der Düse",
+              "burner_entity_id": "Brenner an/aus",
+              "prepurge_s": "Vorbelüftung"
+            },
+            "data_description": {
+              "nominal_flow": "Liter pro Stunde, falls du das statt der Düse kennst (ersetzt sie).",
+              "pump_pressure": "Druck der Ölpumpe, aus dem Wartungsprotokoll oder vom Manometer.",
+              "test_pressure": "Der Druck, für den die Düse angegeben ist. Leer: 7 bar (100 psi).",
+              "burner_entity_id": "An, solange der Brenner läuft: ergibt einen Live-Durchfluss.",
+              "prepurge_s": "Sekunden nach jedem Start, in denen kein Öl brennt."
+            }
+          }
+        }
+      },
+      "fuel": {
+        "title": "Brennstoff und Kessel",
+        "description": "Änderungen gelten ab jetzt; was gebucht ist, bleibt. Lieferungen mit Rechnung setzen Heizwert und CO₂ des Öls in den Tanks selbst.",
+        "data": {
+          "efficiency": "Wirkungsgrad des Kessels",
+          "heating_value": "Heizwert",
+          "co2": "CO₂-Faktor"
+        },
+        "data_description": {
+          "efficiency": "Wärme je Energie im Brennstoff, z. B. 0,9. Einen guten Wert liefert die Abgasmessung des Schornsteinfegers. Leer: 0,9.",
+          "heating_value": "kWh pro Liter für Öl unbekannter Herkunft, bis eine Lieferung ihn nennt. Leer: 10,0 (Heizwert von Heizöl EL). Für den Vergleich mit Gasrechnungen den Brennwert nehmen (etwa 10,6).",
+          "co2": "kg CO₂ pro Liter für Öl unbekannter Herkunft. Leer: 2,66."
+        }
+      },
+      "stock": {
+        "title": "Vorrat und Reichweite",
+        "data": {
+          "low_percent": "Niedrig unter",
+          "range_days": "Reichweite aus den letzten",
+          "reading_accuracy_cm": "Ablesegenauigkeit",
+          "link": "Mehrere Tanks sind verbunden"
+        },
+        "data_description": {
+          "low_percent": "Der Sensor „Vorrat niedrig“ geht an, wenn der nutzbare Vorrat diesen Anteil am Fassungsvermögen erreicht oder unterschreitet.",
+          "range_days": "Tage, aus deren Verbrauch die Reichweite gerechnet wird.",
+          "reading_accuracy_cm": "Wie genau du den Pegel abliest, ± cm. Ergibt die Unsicherheit des gemessenen Faktors.",
+          "link": "Unten: Die Pegel stehen immer gleich, eine Peilung gilt für alle. Nur über die Saugleitungen (T-Stück): Jeder Tank hat seinen eigenen Pegel, der Brenner saugt zuerst aus dem volleren."
+        }
+      },
+      "power": {
+        "title": "Leistungsmessung",
+        "description": "Die Komponenten hinter der Leistungsmessung (Brenner, Pumpen) sind Einträge auf der Seite der Integration, jede mit ihrer typischen Leistung.",
+        "data": {
+          "base_power": "Grundlast"
+        },
+        "data_description": {
+          "base_power": "Was die Kesselregelung dauernd zieht, in W."
+        }
+      }
+    },
+    "error": {
+      "not_positive": "Gib eine Zahl größer als 0 ein.",
+      "entity_not_found": "Entität nicht gefunden.",
+      "not_an_input": "Wähle einen Ölzähler (L, m³), einen Laufzeitzähler (h, min, s), einen Binärsensor oder einen Leistungssensor (W).",
+      "not_cumulative": "Wähle einen Zählerstand, keinen Momentanwert.",
+      "nozzle_required": "Gib die Düse ein, oder ihren Durchsatz unter „Genauer“.",
+      "efficiency_range": "Der Wirkungsgrad ist ein Faktor wie 0,9, keine Prozentangabe.",
+      "not_power": "Wähle einen Leistungssensor in W oder kW.",
+      "burner_required": "Die Leistung als Eingang braucht einen Brenner unter den Komponenten: Lege ihn zuerst auf der Seite der Integration an."
+    }
+  },
+  "config_subentries": {
+    "tank": {
+      "entry_type": "Tank",
+      "initiate_flow": {
+        "user": "Tank hinzufügen",
+        "reconfigure": "Tank bearbeiten"
+      },
+      "step": {
+        "tank": {
+          "title": "Tank",
+          "description": "Peilungen mit Peilstab oder Zollstock trägst du je Tank mit der Aktion „Pegel eintragen“ ein. Mehrere Tanks an einer Saugleitung zählen zusammen.",
+          "data": {
+            "name": "Name",
+            "capacity": "Inhalt",
+            "shape": "Form"
+          },
+          "data_description": {
+            "capacity": "Liter.",
+            "shape": "Senkrechte Wände: Liter pro cm unten. Ein liegender Stahltank und eine Peiltabelle fragen ihre Werte im nächsten Schritt ab."
+          },
+          "sections": {
+            "accuracy": {
+              "name": "Genauer",
+              "data": {
+                "per_cm": "Liter pro cm",
+                "offset_cm": "Leer bei",
+                "residue": "Bodenrest",
+                "level_entity_id": "Füllstandssensor"
+              },
+              "data_description": {
+                "per_cm": "Nur senkrechte Wände: Liter pro cm Höhe (Grundfläche in m² × 10).",
+                "offset_cm": "Der Messwert in cm bei leerem Tank, wenn du ab dem Boden misst: Tankboden oder das, worauf der Tank steht.",
+                "residue": "Liter am Boden, die der Brenner nicht ansaugen kann.",
+                "level_entity_id": "Ein Sensor für den Füllstand in cm, L oder %. Hat jeder Tank einen, ist der Vorrat gemessen statt gerechnet."
+              }
+            }
+          }
+        },
+        "cylinder": {
+          "title": "Liegender Stahltank",
+          "data": {
+            "diameter_cm": "Innendurchmesser",
+            "length_cm": "Innenlänge"
+          }
+        },
+        "table": {
+          "title": "Peiltabelle des Herstellers",
+          "description": "Ein Paar pro Zeile: Höhe in cm und Liter, z. B. `10: 95`. Dazwischen wird interpoliert.",
+          "data": {
+            "table": "Tabelle"
+          }
+        }
+      },
+      "error": {
+        "name_required": "Gib einen Namen ein.",
+        "not_positive": "Gib eine Zahl größer als 0 ein.",
+        "entity_not_found": "Entität nicht gefunden.",
+        "not_a_level": "Wähle einen Sensor in cm, L oder %.",
+        "level_needs_dimensions": "Ein Füllstand in cm braucht die Liter pro cm (oder eine andere Form).",
+        "invalid_table": "Ein Zahlenpaar pro Zeile, mit verschiedenen Höhen."
+      },
+      "abort": {
+        "reconfigure_successful": "Gespeichert. Fuel Ledger wird mit der Änderung neu geladen."
+      }
+    },
+    "component": {
+      "entry_type": "Komponente",
+      "initiate_flow": {
+        "user": "Komponente hinzufügen",
+        "reconfigure": "Komponente bearbeiten"
+      },
+      "step": {
+        "component": {
+          "title": "Komponente hinter der Leistungsmessung",
+          "description": "Fuel Ledger sucht die Kombination von Komponenten, deren typische Leistungen zusammen der gemessenen Leistung am nächsten kommen. Jede Komponente bekommt einen Sensor, ob sie läuft, und einen für ihre Leistung.",
+          "data": {
+            "name": "Name",
+            "component_kind": "Art",
+            "power": "Typische Leistung"
+          },
+          "data_description": {
+            "power": "Watt, solange sie läuft, ohne die anderen."
+          },
+          "sections": {
+            "accuracy": {
+              "name": "Genauer",
+              "data": {
+                "on_delay_s": "Läuft nach",
+                "off_delay_s": "Steht nach"
+              },
+              "data_description": {
+                "on_delay_s": "Sekunden, die sie sich zeigen muss, bevor sie als laufend gilt. So wird eine kurze Spitze (die Zündung) nicht für eine Pumpe gehalten. Leer: 60 für Pumpen, 0 für den Rest.",
+                "off_delay_s": "Sekunden, die sie weg sein muss, bevor sie als stehend gilt. Leer: 120 für Pumpen, 0 für den Rest."
+              }
+            }
+          }
+        }
+      },
+      "error": {
+        "name_required": "Gib einen Namen ein.",
+        "not_positive": "Gib eine Zahl größer als 0 ein."
+      },
+      "abort": {
+        "reconfigure_successful": "Gespeichert. Fuel Ledger wird mit der Änderung neu geladen."
+      }
+    }
+  },
+  "selector": {
+    "shape": {
+      "options": {
+        "linear": "Senkrechte Wände (Batterietank, Quader)",
+        "horizontal_cylinder": "Liegender Zylinder (Stahltank)",
+        "table": "Peiltabelle des Herstellers"
+      }
+    },
+    "link": {
+      "options": {
+        "suction": "Nur über die Saugleitungen (T-Stück)",
+        "bottom": "Unten verbunden (kommunizierend)"
+      }
+    },
+    "component_kind": {
+      "options": {
+        "burner": "Brenner",
+        "preheater": "Ölvorwärmung",
+        "circuit_pump": "Heizkreispumpe",
+        "hot_water_pump": "Warmwasserpumpe",
+        "other": "Sonstiges"
+      }
+    }
+  },
+  "device": {
+    "heating_oil": {
+      "name": "Heizöl"
+    },
+    "tank": {
+      "name": "Tank"
+    },
+    "component_burner": {
+      "name": "Brenner"
+    },
+    "component_preheater": {
+      "name": "Ölvorwärmung"
+    },
+    "component_circuit_pump": {
+      "name": "Heizkreispumpe"
+    },
+    "component_hot_water_pump": {
+      "name": "Warmwasserpumpe"
+    },
+    "component_other": {
+      "name": "Komponente"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "low": {
+        "name": "Vorrat niedrig"
+      }
+    },
+    "button": {
+      "apply_measured_factor": {
+        "name": "Gemessenen Faktor übernehmen"
+      }
+    },
+    "number": {
+      "factor": {
+        "name": "Korrekturfaktor",
+        "state_attributes": {
+          "origin": {
+            "name": "Herkunft"
+          }
+        }
+      }
+    },
+    "sensor": {
+      "consumption": {
+        "name": "Verbrauch"
+      },
+      "energy": {
+        "name": "Energie"
+      },
+      "heat": {
+        "name": "Wärme"
+      },
+      "co2": {
+        "name": "CO₂"
+      },
+      "cost": {
+        "name": "Kosten"
+      },
+      "runtime": {
+        "name": "Brennerlaufzeit"
+      },
+      "flow": {
+        "name": "Durchfluss"
+      },
+      "stock": {
+        "name": "Vorrat"
+      },
+      "fill": {
+        "name": "Füllgrad"
+      },
+      "range": {
+        "name": "Reichweite"
+      },
+      "empty": {
+        "name": "Leer am"
+      },
+      "price": {
+        "name": "Preis pro Liter"
+      },
+      "price_energy": {
+        "name": "Preis pro kWh"
+      },
+      "heating_value": {
+        "name": "Heizwert"
+      },
+      "co2_factor": {
+        "name": "CO₂-Faktor"
+      },
+      "measured_factor": {
+        "name": "Gemessener Faktor"
+      },
+      "last_delivery": {
+        "name": "Letzte Lieferung"
+      },
+      "last_reading": {
+        "name": "Letzte Peilung"
+      },
+      "content": {
+        "name": "Inhalt"
+      },
+      "level": {
+        "name": "Pegel"
+      },
+      "power": {
+        "name": "Leistung"
+      }
+    }
+  },
+  "exceptions": {
+    "entry_not_found": {
+      "message": "Kein Eintrag von Fuel Ledger mit dieser ID."
+    },
+    "entry_not_loaded": {
+      "message": "Dieser Eintrag von Fuel Ledger ist nicht geladen."
+    },
+    "not_a_tank": {
+      "message": "Wähle das Gerät eines Tanks von Fuel Ledger."
+    },
+    "no_measured_factor": {
+      "message": "Es gibt noch keinen gemessenen Faktor: Dafür braucht es zwei Peilungen aller Tanks an denselben Stellen, mit Brennerlaufzeit dazwischen."
+    },
+    "amount_or_level": {
+      "message": "Gib die Liefermenge, den Vorrat nach der Lieferung oder beides ein."
+    },
+    "not_positive": {
+      "message": "Gib Zahlen größer als 0 ein."
+    },
+    "stock_unknown": {
+      "message": "Der Vorrat vor der Lieferung ist unbekannt: Gib auch den Vorrat danach ein."
+    },
+    "level_below_stock": {
+      "message": "Der Vorrat nach der Lieferung liegt unter dem gerechneten Vorrat davor ({stock} L). Gib auch die Liefermenge ein."
+    },
+    "amount_needed": {
+      "message": "Preis, Energie und CO₂ der Rechnung brauchen die Liefermenge: Der Vorrat vor der Lieferung ist unbekannt."
+    },
+    "in_future": {
+      "message": "Der Zeitpunkt liegt in der Zukunft."
+    },
+    "before_last_event": {
+      "message": "Der Zeitpunkt liegt vor der letzten Lieferung oder Korrektur des Vorrats."
+    },
+    "too_early": {
+      "message": "Der Zeitpunkt liegt vor dem Beginn der Zählung von Fuel Ledger: Für ihn gibt es keinen Verbrauch."
+    },
+    "tank_not_found": {
+      "message": "Diesen Tank gibt es nicht."
+    },
+    "height_or_volume": {
+      "message": "Gib den Pegel in cm oder in Litern ein, eins von beiden."
+    },
+    "point_required": {
+      "message": "Gib an, wo du gemessen hast."
+    },
+    "tank_without_dimensions": {
+      "message": "{tank} hat keine Maße, um cm in Liter umzurechnen: Trage Liter pro cm ein, oder gib die Peilung in Litern ein."
+    }
+  },
+  "services": {
+    "record_delivery": {
+      "name": "Lieferung eintragen",
+      "description": "Eine Öllieferung: setzt den Vorrat und mischt Preis, Heizwert und CO₂ mit dem Rest in den Tanks. Gib die Summen wie auf der Rechnung ein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fuel Ledger",
+          "description": "Der Vorrat."
+        },
+        "amount": {
+          "name": "Liefermenge",
+          "description": "Gelieferte Liter."
+        },
+        "level_after": {
+          "name": "Vorrat danach",
+          "description": "Liter in allen Tanks nach der Lieferung. Mit Liefermenge dazu wird der Rest davor korrigiert."
+        },
+        "total_price": {
+          "name": "Rechnungsbetrag",
+          "description": "Bruttobetrag der Rechnung."
+        },
+        "energy": {
+          "name": "Energiegehalt",
+          "description": "kWh, wie auf der Rechnung (in Deutschland nach CO2KostAufG vorgeschrieben)."
+        },
+        "co2": {
+          "name": "CO₂",
+          "description": "kg CO₂, wie auf der Rechnung."
+        },
+        "product": {
+          "name": "Sorte",
+          "description": "Z. B. Heizöl EL schwefelarm."
+        },
+        "supplier": {
+          "name": "Lieferant"
+        },
+        "time": {
+          "name": "Zeitpunkt",
+          "description": "Wann das Öl geliefert wurde. Leer: jetzt. Die neuen Werte gelten ab dem Eintragen."
+        }
+      }
+    },
+    "record_level": {
+      "name": "Pegel eintragen",
+      "description": "Eine Peilung eines Tanks mit Peilstab oder Zollstock. Alle Tanks nacheinander peilen: Zwei solche Peilungen mit Brennerlaufzeit dazwischen ergeben den gemessenen Faktor.",
+      "fields": {
+        "device_id": {
+          "name": "Tank",
+          "description": "Das Gerät des Tanks."
+        },
+        "level": {
+          "name": "Pegel",
+          "description": "Höhe in cm."
+        },
+        "volume": {
+          "name": "Liter",
+          "description": "Statt der Höhe, falls du Liter abliest."
+        },
+        "point": {
+          "name": "Messstelle",
+          "description": "Wo du gemessen hast, z. B. vorne Mitte. Verglichen werden nur Peilungen an derselben Stelle."
+        },
+        "time": {
+          "name": "Zeitpunkt",
+          "description": "Leer: jetzt."
+        }
+      }
+    },
+    "set_stock": {
+      "name": "Vorrat setzen",
+      "description": "Den Vorrat ohne Lieferung korrigieren, z. B. zum Start mit dem, was in den Tanks ist, samt Preis, Heizwert und CO₂ dieses Öls.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fuel Ledger",
+          "description": "Der Vorrat."
+        },
+        "volume": {
+          "name": "Vorrat",
+          "description": "Liter in allen Tanks."
+        },
+        "price": {
+          "name": "Preis pro Liter",
+          "description": "Des Öls in den Tanks. Leer: unverändert."
+        },
+        "heating_value": {
+          "name": "Heizwert",
+          "description": "kWh pro Liter. Leer: unverändert."
+        },
+        "co2": {
+          "name": "CO₂-Faktor",
+          "description": "kg pro Liter. Leer: unverändert."
+        },
+        "time": {
+          "name": "Zeitpunkt",
+          "description": "Leer: jetzt."
+        }
+      }
+    }
+  }
+}

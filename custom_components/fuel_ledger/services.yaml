@@ -1,0 +1,129 @@
+record_delivery:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: fuel_ledger
+    amount:
+      selector:
+        number:
+          min: 0
+          max: 1000000
+          step: any
+          mode: box
+          unit_of_measurement: L
+    level_after:
+      selector:
+        number:
+          min: 0
+          max: 1000000
+          step: any
+          mode: box
+          unit_of_measurement: L
+    total_price:
+      selector:
+        number:
+          min: 0
+          max: 10000000
+          step: any
+          mode: box
+    energy:
+      selector:
+        number:
+          min: 0
+          max: 100000000
+          step: any
+          mode: box
+          unit_of_measurement: kWh
+    co2:
+      selector:
+        number:
+          min: 0
+          max: 10000000
+          step: any
+          mode: box
+          unit_of_measurement: kg
+    product:
+      selector:
+        text:
+    supplier:
+      selector:
+        text:
+    time:
+      selector:
+        datetime:
+
+record_level:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: fuel_ledger
+    level:
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: any
+          mode: box
+          unit_of_measurement: cm
+    volume:
+      selector:
+        number:
+          min: 0
+          max: 1000000
+          step: any
+          mode: box
+          unit_of_measurement: L
+    point:
+      required: true
+      selector:
+        text:
+    time:
+      selector:
+        datetime:
+
+set_stock:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: fuel_ledger
+    volume:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 1000000
+          step: any
+          mode: box
+          unit_of_measurement: L
+    price:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: any
+          mode: box
+    heating_value:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: any
+          mode: box
+          unit_of_measurement: kWh/L
+    co2:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: any
+          mode: box
+          unit_of_measurement: kg/L
+    time:
+      selector:
+        datetime:

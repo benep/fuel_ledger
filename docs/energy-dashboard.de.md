@@ -9,6 +9,8 @@
 
 Der Reiter heißt *Gas*, auch für Öl. Das spielt keine Rolle.
 
+![Der Gas-Reiter des Energie-Dashboards: die Energie des Öls pro Tag und ihre Kosten](assets/screenshots/energy-dashboard.png){ .screenshot }
+
 ## Einrichten
 
 Gehe zu **Einstellungen → Dashboards → Energie**, Reiter **Gas**, und klicke auf **Gaszähler hinzufügen**.
@@ -22,6 +24,8 @@ Gehe zu **Einstellungen → Dashboards → Energie**, Reiter **Gas**, und klicke
 3. Speichern.
 
 </div>
+
+![Der Gas-Bereich der Energie-Einstellungen mit Heizöl Energie und den Kosten](assets/screenshots/energy-gas-settings.png){ .screenshot }
 
 ??? question "Warum nicht den Verbrauch in Litern, oder den Preis pro kWh?"
 
@@ -51,20 +55,20 @@ deine (**Einstellungen → Geräte & Dienste → Entitäten**, suche nach *Heiz�
 type: vertical-stack
 cards:
   - type: tile
-    entity: binary_sensor.burner
+    entity: binary_sensor.brenner
     name: Brenner
   - type: glance
     entities:
-      - entity: binary_sensor.heating_circuit_pump
+      - entity: binary_sensor.heizkreispumpe
         name: Heizkreis
-      - entity: binary_sensor.hot_water_pump
+      - entity: binary_sensor.warmwasserpumpe
         name: Warmwasser
-      - entity: sensor.heating_oil_stock
+      - entity: sensor.heizol_vorrat
         name: Vorrat
-      - entity: sensor.heating_oil_range
+      - entity: sensor.heizol_reichweite
         name: Reichweite
   - type: gauge
-    entity: sensor.heating_oil_fill_level
+    entity: sensor.heizol_fullgrad
     severity:
       red: 0
       yellow: 15
@@ -73,3 +77,5 @@ cards:
 
 Brenner und Pumpen gibt es nur mit Leistungsmessung; mit einem Binärsensor für den Brenner nimm diesen.
 **Heizöl Durchfluss** zeigt die Liter pro Stunde, solange der Brenner läuft.
+
+![Die Karte: Brenner, Pumpen, Vorrat, Reichweite und Füllgrad](assets/screenshots/heating-card.png){ .screenshot }

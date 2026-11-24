@@ -9,6 +9,8 @@
 
 The tab is called *Gas*, even for oil. That does not matter.
 
+![The gas tab of the Energy dashboard: the energy of the oil per day and its cost](assets/screenshots/energy-dashboard.png){ .screenshot }
+
 ## Set it up
 
 Go to **Settings → Dashboards → Energy**, tab **Gas**, and click **Add gas source**.
@@ -21,6 +23,8 @@ Go to **Settings → Dashboards → Energy**, tab **Gas**, and click **Add gas s
 3. Save.
 
 </div>
+
+![The gas section of the Energy settings with Heating oil Energy and its cost](assets/screenshots/energy-gas-settings.png){ .screenshot }
 
 ??? question "Why not the consumption in litres, or the price per kWh?"
 
@@ -70,3 +74,5 @@ cards:
 
 The burner and the pumps are only there with a power meter; with a binary sensor for the burner, use that one.
 **Heating oil Flow rate** shows the litres per hour while the burner runs.
+
+![The card: burner, pumps, stock, range and fill level](assets/screenshots/heating-card.png){ .screenshot }

@@ -22,6 +22,8 @@ flowchart LR
 - **A measured correction factor** from your dipstick readings.
 - **The burner and the pumps** as sensors of their own, if a power meter sits in front of the boiler.
 
+![The Fuel Ledger device: consumption, energy, cost, stock, range and the other sensors at a glance](assets/screenshots/device.png){ .screenshot }
+
 ## What you need
 
 <div class="grid cards" markdown>

@@ -14,6 +14,8 @@ Die Aktionen findest du unter **Einstellungen → Werkzeuge → Aktionen** (in �
 Aktionen**). Suche nach *Fuel Ledger*, füll das Formular aus und klicke auf **Aktion ausführen**. Du kannst sie auch
 in Skripten, Automationen und Dashboard-Knöpfen verwenden, siehe [unten](#ein-knopf-auf-dem-dashboard).
 
+![Die Aktion Lieferung eintragen mit den Werten einer Rechnung](assets/screenshots/record-delivery.png){ .screenshot }
+
 ## Lieferungen
 
 Wird Öl geliefert, trag es mit **Lieferung eintragen** (`fuel_ledger.record_delivery`) ein:

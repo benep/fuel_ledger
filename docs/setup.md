@@ -28,6 +28,8 @@ flowchart LR
 What you call your fuel, for example *Heating oil*. It becomes the name of the device and the start of every entity
 name: *Heating oil Consumption*, *Heating oil Stock* and so on.
 
+![Step 1: the name, here Heating oil, with what follows](assets/screenshots/setup-name.png){ .screenshot }
+
 ## Step 2: Burner
 
 Where does the consumption come from? Choose **one** entity, the best you have:
@@ -42,6 +44,8 @@ Where does the consumption come from? Choose **one** entity, the best you have:
 Under **More accurate** you can add a **power meter of the heating** next to a run time counter or an oil meter. The
 counter then still decides the consumption, and the power meter adds a sensor for the burner, the oil preheater and
 each pump.
+
+![Step 2: the power of the boiler as the input, with More accurate opened](assets/screenshots/setup-burner.png){ .screenshot }
 
 ??? question "Where do I get a run time counter or a binary sensor?"
 
@@ -68,6 +72,8 @@ can run, in watts:
 Each component you enter becomes a device with a binary sensor (whether it runs) and a power sensor. More components
 can be added later on the integration page with **Add component**.
 
+![Step 3: the burner, and under More accurate the base load, the oil preheater and the pumps](assets/screenshots/setup-components.png){ .screenshot }
+
 ??? question "How do I find the typical powers?"
 
     Open the history of the power meter and look at a day: the power stands on a few steps.
@@ -91,6 +97,8 @@ Not with an oil meter. The consumption is run time × nozzle throughput × corre
 | **Nozzle** | Throughput in US gallons per hour, as stamped on the nozzle (e.g. *0.50 GPH 60°*) and in the maintenance record. |
 | **Correction factor** | Leave it empty (1) if you do not know better. It is [measured from dipstick readings](deliveries-and-readings.md#the-measured-factor) later. |
 
+![Step 4: the nozzle, here 0.50 GPH](assets/screenshots/setup-nozzle.png){ .screenshot }
+
 Under **More accurate**:
 
 | Field | What to enter |
@@ -113,6 +121,8 @@ Under **More accurate**:
 Under **More accurate**: **Litres per cm** of one tank, for readings in cm (its base area in m² × 10), and the
 **Residue per tank** the burner cannot draw from the bottom.
 
+![Step 5: two tanks of 1500 L on a T-piece, with 10 litres per cm](assets/screenshots/setup-tanks.png){ .screenshot }
+
 The tanks are called *Tank 1*, *Tank 2* and so on. Rename them with **Edit tank** on the integration page, for
 example *Left* and *Right*. A tank of another shape (a steel tank on its side, a tank with a manufacturer's table) is
 added there with **Add tank**, see [More accurate](more-accurate.md#tanks-of-another-shape).
@@ -131,3 +141,5 @@ added there with **Add tank**, see [More accurate](more-accurate.md#tanks-of-ano
 To change anything later: **Settings → Devices & services → Fuel Ledger**, the gear icon :material-cog: of the entry.
 The menu has **Burner and nozzle**, **Fuel and boiler**, **Stock and range** and, with a power meter, **Power
 meter**. Tanks and components are edited in their own rows on the same page.
+
+![The integration page: the entry with its tanks and the components behind the power meter](assets/screenshots/integration-page.png){ .screenshot }

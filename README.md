@@ -25,6 +25,8 @@ Step-by-step help: in [English](https://benep.github.io/fuel_ledger/) and in
 - **A measured correction factor** from two readings with a dipstick, so the estimate gets better by itself.
 - **The burner and the pumps** as sensors of their own, if a power meter sits in front of the boiler.
 
+![The Fuel Ledger device: consumption, energy, cost, stock, range and the other sensors at a glance](https://raw.githubusercontent.com/benep/fuel_ledger/main/docs/assets/screenshots/device.png)
+
 ## What you need
 
 One of these, from best to roughest. Fuel Ledger asks for it in the first step.

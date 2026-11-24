@@ -23,6 +23,8 @@ flowchart LR
 - **Einen gemessenen Korrekturfaktor** aus deinen Peilungen.
 - **Den Brenner und die Pumpen** als eigene Sensoren, wenn eine Leistungsmessung vor dem Kessel sitzt.
 
+![Das Gerät von Fuel Ledger: Verbrauch, Energie, Kosten, Vorrat, Reichweite und die anderen Sensoren auf einen Blick](assets/screenshots/device.png){ .screenshot }
+
 ## Was du brauchst
 
 <div class="grid cards" markdown>

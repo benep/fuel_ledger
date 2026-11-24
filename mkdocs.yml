@@ -8,8 +8,8 @@ edit_uri: ""
 theme:
   name: material
   language: en
-  icon:
-    logo: material/oil
+  logo: assets/icon.png
+  favicon: assets/icon.png
   features:
     - navigation.footer
     - navigation.top

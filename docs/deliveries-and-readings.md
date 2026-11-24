@@ -14,6 +14,8 @@ The actions are in **Settings → Tools → Actions** (in older versions **Devel
 *Fuel Ledger*, fill in the form, and click **Perform action**. They can also be used in scripts, automations and
 dashboard buttons, see [below](#a-button-on-the-dashboard).
 
+![The action Record delivery with the values of an invoice](assets/screenshots/record-delivery.png){ .screenshot }
+
 ## Deliveries
 
 When oil is delivered, enter it with **Record delivery** (`fuel_ledger.record_delivery`):

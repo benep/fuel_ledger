@@ -1,0 +1,98 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "low": {
+        "default": "mdi:oil-level",
+        "state": {
+          "on": "mdi:alert"
+        }
+      }
+    },
+    "button": {
+      "apply_measured_factor": {
+        "default": "mdi:check-decagram"
+      }
+    },
+    "number": {
+      "factor": {
+        "default": "mdi:tune-variant"
+      }
+    },
+    "sensor": {
+      "consumption": {
+        "default": "mdi:oil"
+      },
+      "energy": {
+        "default": "mdi:fire"
+      },
+      "heat": {
+        "default": "mdi:radiator"
+      },
+      "co2": {
+        "default": "mdi:molecule-co2"
+      },
+      "cost": {
+        "default": "mdi:cash"
+      },
+      "flow": {
+        "default": "mdi:water-pump"
+      },
+      "runtime": {
+        "default": "mdi:timer-outline"
+      },
+      "stock": {
+        "default": "mdi:storage-tank"
+      },
+      "fill": {
+        "default": "mdi:gauge"
+      },
+      "range": {
+        "default": "mdi:calendar-clock"
+      },
+      "empty": {
+        "default": "mdi:calendar-alert"
+      },
+      "price": {
+        "default": "mdi:tag-outline"
+      },
+      "price_energy": {
+        "default": "mdi:tag"
+      },
+      "heating_value": {
+        "default": "mdi:fire-circle"
+      },
+      "co2_factor": {
+        "default": "mdi:molecule-co2"
+      },
+      "measured_factor": {
+        "default": "mdi:ruler"
+      },
+      "last_delivery": {
+        "default": "mdi:truck-delivery"
+      },
+      "content": {
+        "default": "mdi:storage-tank-outline"
+      },
+      "last_reading": {
+        "default": "mdi:ruler"
+      },
+      "level": {
+        "default": "mdi:arrow-collapse-vertical"
+      },
+      "power": {
+        "default": "mdi:flash"
+      }
+    }
+  },
+  "services": {
+    "record_delivery": {
+      "service": "mdi:truck-delivery"
+    },
+    "record_level": {
+      "service": "mdi:ruler"
+    },
+    "set_stock": {
+      "service": "mdi:storage-tank"
+    }
+  }
+}

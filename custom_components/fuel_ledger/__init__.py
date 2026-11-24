@@ -127,6 +127,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         measured = runtime.ledger.measured_factor()
         return {
             "volume": record["volume"],
+            "calculated": record["calculated"],  # what the tank held by the books at that moment
             "measured_factor": measured.value if measured else None,
             "uncertainty": measured.uncertainty if measured else None,
         }

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Fuel Ledger",
-        "description": "Führt Buch über dein Heizöl: Verbrauch, Energie und Wärme für das Energie-Dashboard, Vorrat und Reichweite deiner Tanks, Lieferungen mit Preis, Heizwert und CO₂. Es folgen drei kurze Schritte: Brenner, Düse, Tanks. Alles lässt sich später auf der Seite der Integration ändern.\n\nIn diesen Schritten gibt es kein Zurück: Ist etwas schiefgegangen, den Dialog schließen und neu beginnen.",
+        "description": "Führt Buch über dein Heizöl: Verbrauch, Energie und Wärme für das Energie-Dashboard, Vorrat und Reichweite deiner Tanks, Lieferungen mit Preis, Heizwert und CO₂. Es folgen ein paar kurze Schritte: der Brenner (mit Strommesser auch, was dahinter läuft), die Düse, die Tanks. Alles lässt sich später auf der Seite der Integration ändern.\n\nIn diesen Schritten gibt es kein Zurück: Ist etwas schiefgegangen, den Dialog schließen und neu beginnen.",
         "data": {
           "name": "Name"
         },
@@ -18,7 +18,7 @@
           "entity_id": "Eingang für den Verbrauch"
         },
         "data_description": {
-          "entity_id": "Ölzähler, Laufzeitzähler oder Binärsensor des Brenners."
+          "entity_id": "Ölzähler, Laufzeitzähler, Binärsensor des Brenners oder die Leistung der Heizung in W."
         },
         "sections": {
           "accuracy": {

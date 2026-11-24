@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
-from homeassistant.core import CALLBACK_TYPE, Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.core import CALLBACK_TYPE, Event, EventStateChangedData, HomeAssistant, State, callback
 from homeassistant.helpers.event import (
     async_track_point_in_utc_time,
     async_track_state_change_event,
@@ -28,12 +28,14 @@ from .const import (
     STORAGE_VERSION,
 )
 from .engine import Disaggregator, InputKind, Ledger, LedgerSpec, Origin
+from .engine.history import past_checkpoints
 from .engine.power import Change
 from .model import parse_burner, parse_input, parse_level, parse_power
 
 _LOGGER = logging.getLogger(__name__)
 
 STORE_KEY_LEDGER = "ledger"
+PAST_DAYS = 30  # at most this far back, if the recorder keeps it
 
 
 def store_key(entry_id: str) -> str:
@@ -70,6 +72,10 @@ class FuelLedgerRuntime:
         now = self._now()
         if not self.ledger.restored:
             self._apply_initial(now)
+            if "recorder" in self.hass.config.components:
+                self.entry.async_create_background_task(
+                    self.hass, self._async_read_past(now), f"{DOMAIN} past of {self.entry.title}"
+                )
         burner = self.spec.burner
         if self.power is not None:
             self.power.update(now, self._read_power())  # the first measurement confirms at once
@@ -195,6 +201,44 @@ class FuelLedgerRuntime:
         volumes = {t.id: self.tank_volume(t.id) for t in self.spec.tanks}
         complete = all(v is not None for v in volumes.values())
         self.ledger.measure_stock(now, volumes if complete else None)  # type: ignore[arg-type]
+
+    async def _async_read_past(self, end: float) -> None:
+        """Once, at the first start: the consumption of the days the recorder still has, as checkpoints before the
+        setup. Gives the range at once and lets deliveries and readings be dated before the setup."""
+        from homeassistant.components.recorder import get_instance, history
+
+        instance = get_instance(self.hass)
+        stop = dt_util.utc_from_timestamp(end)
+        begin = stop - timedelta(days=min(instance.keep_days, PAST_DAYS))
+        if (oldest := instance.states_manager.oldest_ts) is not None:
+            begin = max(begin, dt_util.utc_from_timestamp(oldest))
+        if begin >= stop:
+            return
+        spec = self.spec
+        keys = [spec.power.key] if spec.burner.kind is InputKind.POWER and spec.power else [spec.burner.key]
+
+        def read() -> dict[str, list[State]]:
+            return history.get_significant_states(self.hass, begin, stop, keys, None, True, False, False, False)
+
+        try:
+            await instance.async_block_till_done()
+            states = await instance.async_add_executor_job(read)
+        except Exception:
+            _LOGGER.warning("%s: the recorded states could not be read", self.entry.title, exc_info=True)
+            return
+        samples: list[tuple[float, str, float | bool | None]] = []
+        for key, items in states.items():
+            for state in items:
+                value = (
+                    parse_power(state.state, state.attributes)
+                    if spec.power and key == spec.power.key
+                    else parse_input(spec.burner.kind, state.state, state.attributes)
+                )
+                samples.append((max(state.last_updated.timestamp(), begin.timestamp()), key, value))
+        points = await self.hass.async_add_executor_job(past_checkpoints, spec, self.ledger.factor, samples, end)
+        if taken := self.ledger.seed(points):
+            _LOGGER.debug("%s: %d hours of consumption before the setup", self.entry.title, taken)
+            await self.async_changed()
 
     def _data(self) -> dict[str, Any]:
         return {STORE_KEY_LEDGER: self.ledger.to_dict()}

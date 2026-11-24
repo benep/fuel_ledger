@@ -5,7 +5,7 @@
   "codeowners": ["@benep"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/benep/fuel_ledger",
+  "documentation": "https://benep.github.io/fuel_ledger/",
   "integration_type": "service",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/benep/fuel_ledger/issues",

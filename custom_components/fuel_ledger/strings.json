@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Fuel Ledger",
-        "description": "Keeps the books for your heating oil: consumption, energy and heat for the Energy dashboard, stock and range of your tanks, deliveries with their price, heating value and CO₂. Three short steps follow: burner, nozzle, tanks. Everything can be changed later on the integration page.\n\nThere is no back button in these steps: if something went wrong, close the dialog and start again.",
+        "description": "Keeps the books for your heating oil: consumption, energy and heat for the Energy dashboard, stock and range of your tanks, deliveries with their price, heating value and CO₂. A few short steps follow: the burner (with a power meter also what runs behind it), the nozzle, the tanks. Everything can be changed later on the integration page.\n\nThere is no back button in these steps: if something went wrong, close the dialog and start again.",
         "data": {
           "name": "Name"
         },
@@ -18,7 +18,7 @@
           "entity_id": "Consumption input"
         },
         "data_description": {
-          "entity_id": "Oil meter, run time counter or binary sensor of the burner."
+          "entity_id": "Oil meter, run time counter, binary sensor of the burner, or the power of the heating in W."
         },
         "sections": {
           "accuracy": {

@@ -31,7 +31,13 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: FuelLed
         result["loaded"] = False
         return result
     result["loaded"] = True
-    keys = [runtime.spec.burner.key, runtime.spec.burner.state_key, *(t.level_key for t in runtime.spec.tanks)]
+    power = runtime.spec.power
+    keys = [
+        runtime.spec.burner.key,
+        runtime.spec.burner.state_key,
+        power.key if power else None,
+        *(t.level_key for t in runtime.spec.tanks),
+    ]
     result["inputs"] = {}
     for entity_id in dict.fromkeys(k for k in keys if k):
         state = hass.states.get(entity_id)
@@ -44,5 +50,10 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: FuelLed
     measured = ledger.measured_factor()
     result["nominal_flow"] = runtime.spec.burner.nominal_flow
     result["measured_factor"] = measured.as_dict() if measured else None
+    if runtime.power is not None:
+        result["components"] = {
+            c.id: {"running": runtime.power.state.get(c.id), "power": runtime.power.power(c.id)}
+            for c in power.components
+        }
     result["ledger"] = ledger.to_dict()
     return result

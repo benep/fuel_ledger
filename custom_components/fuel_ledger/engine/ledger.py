@@ -109,7 +109,7 @@ class _Counter:
 class _Stock:
     """The tanks after a run of events: their contents at a consumption, and the values of the fuel in them."""
 
-    consumption: float = 0.0
+    consumption: float = float("-inf")  # of the last event; before the setup it is below 0 (history.py)
     volumes: Volumes | None = None  # None: unknown; a tank missing: unknown so far
     price: float | None = None
     price_origin: Origin = Origin.DEFAULT
@@ -198,6 +198,15 @@ class Ledger:
         if hour != self._pruned_hour:
             self._pruned_hour = hour
             self._prune(ts)
+
+    def seed(self, points: list[list[float]]) -> int:
+        """Checkpoints from before the first one, counted back from the start (history.past_checkpoints): the
+        consumption before the setup, for the range and for events dated before it. Counters stay as they are.
+        Returns how many were taken."""
+        first = self.checkpoints[0][0] if self.checkpoints else self.time
+        earlier = [list(map(float, p)) for p in points if first is None or p[0] < first]
+        self.checkpoints = earlier + self.checkpoints
+        return len(earlier)
 
     def measure_stock(self, ts: float, volumes: Mapping[str, float] | None) -> None:
         """The contents of all tanks by their level sensors, or None if one is unavailable. A measurement replaces

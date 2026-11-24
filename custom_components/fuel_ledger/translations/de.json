@@ -426,19 +426,81 @@
     },
     "sensor": {
       "consumption": {
-        "name": "Verbrauch"
+        "name": "Verbrauch",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          },
+          "basis": {
+            "name": "Grundlage"
+          }
+        }
       },
       "energy": {
-        "name": "Energie"
+        "name": "Energie",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          },
+          "basis": {
+            "name": "Grundlage"
+          }
+        }
       },
       "heat": {
-        "name": "Wärme"
+        "name": "Wärme",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          },
+          "basis": {
+            "name": "Grundlage"
+          }
+        }
       },
       "co2": {
-        "name": "CO₂"
+        "name": "CO₂",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          },
+          "basis": {
+            "name": "Grundlage"
+          }
+        }
       },
       "cost": {
-        "name": "Kosten"
+        "name": "Kosten",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          }
+        }
       },
       "runtime": {
         "name": "Brennerlaufzeit"
@@ -447,40 +509,177 @@
         "name": "Durchfluss"
       },
       "stock": {
-        "name": "Vorrat"
+        "name": "Vorrat",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          }
+        }
       },
       "fill": {
-        "name": "Füllgrad"
+        "name": "Füllgrad",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          }
+        }
       },
       "range": {
-        "name": "Reichweite"
+        "name": "Reichweite",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          }
+        }
       },
       "empty": {
-        "name": "Leer am"
+        "name": "Leer am",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          }
+        }
       },
       "price": {
-        "name": "Preis pro Liter"
+        "name": "Preis pro Liter",
+        "state_attributes": {
+          "origin": {
+            "name": "Herkunft",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          }
+        }
       },
       "price_energy": {
         "name": "Preis pro kWh"
       },
       "heating_value": {
-        "name": "Heizwert"
+        "name": "Heizwert",
+        "state_attributes": {
+          "origin": {
+            "name": "Herkunft",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          }
+        }
       },
       "co2_factor": {
-        "name": "CO₂-Faktor"
+        "name": "CO₂-Faktor",
+        "state_attributes": {
+          "origin": {
+            "name": "Herkunft",
+            "state": {
+              "default": "Standard",
+              "set": "Eingegeben",
+              "delivery": "Lieferung",
+              "measured": "Gemessen"
+            }
+          }
+        }
       },
       "measured_factor": {
-        "name": "Gemessener Faktor"
+        "name": "Gemessener Faktor",
+        "state_attributes": {
+          "uncertainty": {
+            "name": "Unsicherheit"
+          },
+          "start": {
+            "name": "Von"
+          },
+          "end": {
+            "name": "Bis"
+          },
+          "litres_at_factor_1": {
+            "name": "Liter bei Faktor 1"
+          },
+          "litres_measured": {
+            "name": "Liter gemessen"
+          }
+        }
       },
       "last_delivery": {
-        "name": "Letzte Lieferung"
+        "name": "Letzte Lieferung",
+        "state_attributes": {
+          "amount": {
+            "name": "Liefermenge"
+          },
+          "rest": {
+            "name": "Rest davor"
+          },
+          "level_after": {
+            "name": "Vorrat danach"
+          },
+          "total_price": {
+            "name": "Rechnungsbetrag"
+          },
+          "energy": {
+            "name": "Energiegehalt"
+          },
+          "co2": {
+            "name": "CO₂"
+          },
+          "product": {
+            "name": "Sorte"
+          },
+          "supplier": {
+            "name": "Lieferant"
+          }
+        }
       },
       "last_reading": {
-        "name": "Letzte Peilung"
+        "name": "Letzte Peilung",
+        "state_attributes": {
+          "height_cm": {
+            "name": "Höhe"
+          },
+          "point": {
+            "name": "Messstelle"
+          },
+          "time": {
+            "name": "Zeitpunkt"
+          }
+        }
       },
       "content": {
-        "name": "Inhalt"
+        "name": "Inhalt",
+        "state_attributes": {
+          "level": {
+            "name": "Stufe",
+            "state": {
+              "measured": "Gemessen",
+              "calculated": "Berechnet",
+              "estimated": "Geschätzt"
+            }
+          }
+        }
       },
       "level": {
         "name": "Pegel"

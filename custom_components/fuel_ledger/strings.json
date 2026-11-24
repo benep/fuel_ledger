@@ -426,19 +426,81 @@
     },
     "sensor": {
       "consumption": {
-        "name": "Consumption"
+        "name": "Consumption",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          },
+          "basis": {
+            "name": "Basis"
+          }
+        }
       },
       "energy": {
-        "name": "Energy"
+        "name": "Energy",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          },
+          "basis": {
+            "name": "Basis"
+          }
+        }
       },
       "heat": {
-        "name": "Heat"
+        "name": "Heat",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          },
+          "basis": {
+            "name": "Basis"
+          }
+        }
       },
       "co2": {
-        "name": "CO₂"
+        "name": "CO₂",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          },
+          "basis": {
+            "name": "Basis"
+          }
+        }
       },
       "cost": {
-        "name": "Cost"
+        "name": "Cost",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          }
+        }
       },
       "runtime": {
         "name": "Burner run time"
@@ -447,40 +509,177 @@
         "name": "Flow rate"
       },
       "stock": {
-        "name": "Stock"
+        "name": "Stock",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          }
+        }
       },
       "fill": {
-        "name": "Fill level"
+        "name": "Fill level",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          }
+        }
       },
       "range": {
-        "name": "Range"
+        "name": "Range",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          }
+        }
       },
       "empty": {
-        "name": "Empty on"
+        "name": "Empty on",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          }
+        }
       },
       "price": {
-        "name": "Price per litre"
+        "name": "Price per litre",
+        "state_attributes": {
+          "origin": {
+            "name": "Origin",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          }
+        }
       },
       "price_energy": {
         "name": "Price per kWh"
       },
       "heating_value": {
-        "name": "Heating value"
+        "name": "Heating value",
+        "state_attributes": {
+          "origin": {
+            "name": "Origin",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          }
+        }
       },
       "co2_factor": {
-        "name": "CO₂ factor"
+        "name": "CO₂ factor",
+        "state_attributes": {
+          "origin": {
+            "name": "Origin",
+            "state": {
+              "default": "Default",
+              "set": "Set",
+              "delivery": "Delivery",
+              "measured": "Measured"
+            }
+          }
+        }
       },
       "measured_factor": {
-        "name": "Measured factor"
+        "name": "Measured factor",
+        "state_attributes": {
+          "uncertainty": {
+            "name": "Uncertainty"
+          },
+          "start": {
+            "name": "From"
+          },
+          "end": {
+            "name": "To"
+          },
+          "litres_at_factor_1": {
+            "name": "Litres at factor 1"
+          },
+          "litres_measured": {
+            "name": "Litres measured"
+          }
+        }
       },
       "last_delivery": {
-        "name": "Last delivery"
+        "name": "Last delivery",
+        "state_attributes": {
+          "amount": {
+            "name": "Amount"
+          },
+          "rest": {
+            "name": "Rest before"
+          },
+          "level_after": {
+            "name": "Stock after"
+          },
+          "total_price": {
+            "name": "Invoice total"
+          },
+          "energy": {
+            "name": "Energy content"
+          },
+          "co2": {
+            "name": "CO₂"
+          },
+          "product": {
+            "name": "Product"
+          },
+          "supplier": {
+            "name": "Supplier"
+          }
+        }
       },
       "last_reading": {
-        "name": "Last reading"
+        "name": "Last reading",
+        "state_attributes": {
+          "height_cm": {
+            "name": "Height"
+          },
+          "point": {
+            "name": "Measuring point"
+          },
+          "time": {
+            "name": "Time"
+          }
+        }
       },
       "content": {
-        "name": "Content"
+        "name": "Content",
+        "state_attributes": {
+          "level": {
+            "name": "Level",
+            "state": {
+              "measured": "Measured",
+              "calculated": "Calculated",
+              "estimated": "Estimated"
+            }
+          }
+        }
       },
       "level": {
         "name": "Level"

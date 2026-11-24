@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 330" width="820" height="330" font-family="Roboto, 'Segoe UI', Arial, sans-serif" font-size="15">
+  <rect x="0" y="0" width="820" height="330" rx="12" fill="#fafafa"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e65100"/>
+    </marker>
+  </defs>
+  <line x1="30" y1="290" x2="520" y2="290" stroke="#9e9e9e" stroke-width="2"/>
+  <!-- Tank 1: lower level -->
+  <rect x="50" y="90" width="150" height="200" rx="6" fill="#ffffff" stroke="#616161" stroke-width="2"/>
+  <rect x="52" y="210" width="146" height="78" fill="#8d6e63" opacity="0.85"/>
+  <text x="125" y="312" text-anchor="middle" fill="#212121">Tank 1</text>
+  <!-- Tank 2: higher level -->
+  <rect x="250" y="90" width="150" height="200" rx="6" fill="#ffffff" stroke="#616161" stroke-width="2"/>
+  <rect x="252" y="140" width="146" height="148" fill="#8d6e63" opacity="0.85"/>
+  <text x="325" y="312" text-anchor="middle" fill="#212121">Tank 2</text>
+  <!-- Where both stand level -->
+  <line x1="40" y1="210" x2="410" y2="210" stroke="#e65100" stroke-width="2" stroke-dasharray="6 5"/>
+  <!-- Suction pipes and T-piece -->
+  <path d="M100 270 V50 H225" fill="none" stroke="#424242" stroke-width="4"/>
+  <path d="M300 270 V50 H225" fill="none" stroke="#424242" stroke-width="4"/>
+  <path d="M225 50 V25 H480 V130" fill="none" stroke="#424242" stroke-width="4"/>
+  <circle cx="225" cy="50" r="7" fill="#424242"/>
+  <text x="225" y="76" text-anchor="middle" fill="#424242" font-size="13">T-Stück</text>
+  <!-- Burner -->
+  <rect x="430" y="130" width="100" height="60" rx="8" fill="#ffccbc" stroke="#e65100" stroke-width="2"/>
+  <text x="480" y="166" text-anchor="middle" fill="#212121">Brenner</text>
+  <!-- Drawn first from tank 2 -->
+  <path d="M350 146 V200" fill="none" stroke="#e65100" stroke-width="3" marker-end="url(#arrow)"/>
+  <!-- Explanations -->
+  <text fill="#212121">
+    <tspan x="560" y="110" font-weight="bold" fill="#e65100">1</tspan>
+    <tspan x="580" y="110">Erst aus dem Tank, in dem</tspan>
+    <tspan x="580" y="130">das Öl höher steht, bis</tspan>
+    <tspan x="580" y="150">zur gestrichelten Linie</tspan>
+    <tspan x="560" y="200" font-weight="bold" fill="#e65100">2</tspan>
+    <tspan x="580" y="200">Dann aus beiden, aus</tspan>
+    <tspan x="580" y="220">jedem gleich viel Höhe</tspan>
+  </text>
+</svg>

@@ -110,13 +110,17 @@ def input_kind(domain: str, unit: str | None, device_class: str | None = None) -
     return None
 
 
+class NoBurnerError(ValueError):
+    """The power meter is the input, but no component is the burner (it was removed)."""
+
+
 def build_spec(options: Mapping[str, Any], subentries: Iterable[Any]) -> LedgerSpec:
     """The ledger's spec from the entry's options and its subentries. KeyError/ValueError if incomplete."""
     subentries = list(subentries)
     kind = InputKind(options[CONF_KIND])
     power = power_spec(options, subentries)
     if kind is InputKind.POWER and (power is None or power.burner is None):
-        raise ValueError("the power input needs a burner among the components")
+        raise NoBurnerError("the power input needs a burner among the components")
     nominal: float | None = None
     if kind is not InputKind.METER:
         if options.get(CONF_NOMINAL_FLOW):

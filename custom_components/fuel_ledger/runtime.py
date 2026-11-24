@@ -51,6 +51,7 @@ class FuelLedgerRuntime:
         self.power = Disaggregator(spec.power) if spec.power else None
         self._store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, store_key(entry.entry_id))
         self._listeners: list[CALLBACK_TYPE] = []
+        self._power_listeners: list[CALLBACK_TYPE] = []
         self._unsubscribe: list[CALLBACK_TYPE] = []
         self._due: CALLBACK_TYPE | None = None
         burner = spec.power.burner if spec.power else None
@@ -113,14 +114,21 @@ class FuelLedgerRuntime:
     # --- Sensors -----------------------------------------------------------------------------------------------
 
     @callback
-    def async_add_listener(self, update: CALLBACK_TYPE) -> Callable[[], None]:
-        """Call update after every interval and every event. Returns the function that removes the listener."""
-        self._listeners.append(update)
-        return lambda: self._listeners.remove(update)
+    def async_add_listener(self, update: CALLBACK_TYPE, *, power: bool = False) -> Callable[[], None]:
+        """Call update after every interval and every event; with power, also after every measurement of the power
+        meter (only the components follow it, the meter may report every second). Returns the remover."""
+        listeners = self._power_listeners if power else self._listeners
+        listeners.append(update)
+        return lambda: listeners.remove(update)
 
     @callback
     def async_update_listeners(self) -> None:
-        for update in list(self._listeners):
+        for update in [*self._listeners, *self._power_listeners]:
+            update()
+
+    @callback
+    def _update_power_listeners(self) -> None:
+        for update in list(self._power_listeners):
             update()
 
     async def async_changed(self) -> None:
@@ -198,7 +206,7 @@ class FuelLedgerRuntime:
             if change.component != self._burner_component:
                 continue
             if burner.kind is InputKind.POWER:
-                self.ledger.observe(change.time, change.on)
+                self.ledger.observe(change.time, change.on, initial=change.initial)
             elif burner.kind is InputKind.RUNTIME and not burner.state_key:
                 self.ledger.burner_state(change.time, change.on)
         self._schedule()
@@ -228,8 +236,8 @@ class FuelLedgerRuntime:
         burner = self.spec.burner
         if self.power is not None and self.spec.power and entity_id == self.spec.power.key:
             watts = parse_power(new.state, new.attributes) if new else None
-            self._apply_changes(self.power.update(now, watts))
-            self.async_update_listeners()  # the power of each component follows every measurement
+            self._apply_changes(self.power.update(now, watts))  # a confirmed change updates all
+            self._update_power_listeners()  # the power of each component follows every measurement
             if burner.kind is InputKind.POWER:
                 return
         if entity_id == burner.key:

@@ -108,13 +108,15 @@
               "base_power": "Grundlast",
               "preheater_power": "Ölvorwärmung",
               "circuit_pump_power": "Heizkreispumpe",
-              "hot_water_pump_power": "Warmwasserpumpe"
+              "hot_water_pump_power": "Warmwasserpumpe",
+              "circulation_pump_power": "Zirkulationspumpe"
             },
             "data_description": {
               "base_power": "Was die Kesselregelung dauernd zieht.",
               "preheater_power": "Wärmt das Öl ein paar Minuten vor dem Start des Brenners.",
               "circuit_pump_power": "Treibt das Wasser durch die Heizkörper.",
-              "hot_water_pump_power": "Lädt den Warmwasserspeicher."
+              "hot_water_pump_power": "Lädt den Warmwasserspeicher.",
+              "circulation_pump_power": "Hält warmes Wasser an den Zapfstellen bereit, oft mit Zeitschaltung. Nur, wenn sie hinter dem Strommesser hängt."
             }
           }
         }
@@ -301,7 +303,7 @@
         "entity_not_found": "Entität nicht gefunden.",
         "not_a_level": "Wähle einen Sensor in cm, L oder %.",
         "level_needs_dimensions": "Ein Füllstand in cm braucht die Liter pro cm (oder eine andere Form).",
-        "invalid_table": "Ein Zahlenpaar pro Zeile, mit verschiedenen Höhen."
+        "invalid_table": "Ein Zahlenpaar pro Zeile, mit verschiedenen Höhen und mehr Litern, je höher."
       },
       "abort": {
         "reconfigure_successful": "Gespeichert. Fuel Ledger wird mit der Änderung neu geladen."
@@ -334,7 +336,7 @@
               },
               "data_description": {
                 "on_delay_s": "Sekunden, die sie sich zeigen muss, bevor sie als laufend gilt. So wird eine kurze Spitze (die Zündung) nicht für eine Pumpe gehalten. Leer: 60 für Pumpen, 0 für den Rest.",
-                "off_delay_s": "Sekunden, die sie weg sein muss, bevor sie als stehend gilt. Leer: 120 für Pumpen, 0 für den Rest."
+                "off_delay_s": "Sekunden, die sie weg sein muss, bevor sie als stehend gilt. Leer: 120 für Pumpen, 0 für den Rest. Der Brenner steht immer sofort."
               }
             }
           }
@@ -342,7 +344,8 @@
       },
       "error": {
         "name_required": "Gib einen Namen ein.",
-        "not_positive": "Gib eine Zahl größer als 0 ein."
+        "not_positive": "Gib eine Zahl größer als 0 ein.",
+        "last_burner": "Das ist der einzige Brenner, und der Strommesser ist der Eingang: Ohne Brenner wird nichts gezählt. Lege erst einen anderen Brenner an."
       },
       "abort": {
         "reconfigure_successful": "Gespeichert. Fuel Ledger wird mit der Änderung neu geladen."
@@ -369,7 +372,8 @@
         "preheater": "Ölvorwärmung",
         "circuit_pump": "Heizkreispumpe",
         "hot_water_pump": "Warmwasserpumpe",
-        "other": "Sonstiges"
+        "other": "Sonstiges",
+        "circulation_pump": "Zirkulationspumpe"
       }
     }
   },
@@ -394,6 +398,9 @@
     },
     "component_other": {
       "name": "Komponente"
+    },
+    "component_circulation_pump": {
+      "name": "Zirkulationspumpe"
     }
   },
   "entity": {
@@ -514,9 +521,6 @@
     "in_future": {
       "message": "Der Zeitpunkt liegt in der Zukunft."
     },
-    "before_last_event": {
-      "message": "Der Zeitpunkt liegt vor der letzten Lieferung oder Korrektur des Vorrats."
-    },
     "too_early": {
       "message": "Der Zeitpunkt liegt vor dem Beginn der Zählung von Fuel Ledger: Für ihn gibt es keinen Verbrauch."
     },
@@ -531,6 +535,12 @@
     },
     "tank_without_dimensions": {
       "message": "{tank} hat keine Maße, um cm in Liter umzurechnen: Trage Liter pro cm ein, oder gib die Peilung in Litern ein."
+    },
+    "level_below_amount": {
+      "message": "Der Vorrat nach der Lieferung ist kleiner als die gelieferte Menge. Prüf beide Angaben."
+    },
+    "no_burner": {
+      "message": "Der Strommesser ist der Eingang, aber keine Komponente ist der Brenner. Lege eine Komponente der Art Brenner an."
     }
   },
   "services": {
@@ -567,7 +577,8 @@
           "description": "Z. B. Heizöl EL schwefelarm."
         },
         "supplier": {
-          "name": "Lieferant"
+          "name": "Lieferant",
+          "description": "Wer geliefert hat, für deine Unterlagen."
         },
         "time": {
           "name": "Zeitpunkt",
@@ -630,6 +641,12 @@
           "description": "Leer: jetzt."
         }
       }
+    }
+  },
+  "issues": {
+    "components_alike": {
+      "title": "{entry}: Zwei Komponenten ziehen fast gleich viel Leistung",
+      "description": "Hinter dem Strommesser ziehen diese Komponenten so ähnlich viel, dass Fuel Ledger nicht erkennt, welche von beiden läuft: {pairs}.\n\nDie Summe bleibt richtig, und der Brenner wird weiter richtig gezählt, solange er nicht dabei ist. Nur welche der beiden als laufend erscheint, ist geraten.\n\nWenn dir die Laufzeit des Brenners reicht, entferne eine davon. Kennst du für jede eine genauere Leistung, trag sie mit **Komponente bearbeiten** ein."
     }
   }
 }

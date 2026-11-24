@@ -48,3 +48,9 @@ def test_parse_table():
     for bad in ("", "10", "10: 5\n10: 6", "-1: 4", "a: b"):
         with pytest.raises(ValueError):
             parse_table(bad)
+
+
+def test_a_table_needs_more_litres_the_higher():
+    assert parse_table("10: 50\n20: 150") == ((10.0, 50.0), (20.0, 150.0))
+    with pytest.raises(ValueError):
+        parse_table("10: 150\n20: 50")

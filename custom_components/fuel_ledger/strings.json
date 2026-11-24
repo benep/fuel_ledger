@@ -108,13 +108,15 @@
               "base_power": "Base load",
               "preheater_power": "Oil preheater",
               "circuit_pump_power": "Heating circuit pump",
-              "hot_water_pump_power": "Hot water pump"
+              "hot_water_pump_power": "Hot water pump",
+              "circulation_pump_power": "Hot water circulation pump"
             },
             "data_description": {
               "base_power": "What the boiler's control draws all the time.",
               "preheater_power": "Warms the oil for a few minutes before the burner starts.",
               "circuit_pump_power": "Moves the water through the radiators.",
-              "hot_water_pump_power": "Charges the hot water tank."
+              "hot_water_pump_power": "Charges the hot water tank.",
+              "circulation_pump_power": "Keeps hot water moving to the taps, often on a timer. Only if it is plugged in behind the meter."
             }
           }
         }
@@ -301,7 +303,7 @@
         "entity_not_found": "Entity not found.",
         "not_a_level": "Choose a sensor in cm, L or %.",
         "level_needs_dimensions": "A level in cm needs the litres per cm (or another shape).",
-        "invalid_table": "One pair of numbers per line, with different heights."
+        "invalid_table": "One pair of numbers per line, with different heights, and more litres the higher."
       },
       "abort": {
         "reconfigure_successful": "Saved. Fuel Ledger is reloaded with the change."
@@ -334,7 +336,7 @@
               },
               "data_description": {
                 "on_delay_s": "Seconds it has to show before it counts as running. Keeps a short peak (the ignition) from being taken for a pump. Empty: 60 for pumps, 0 for the rest.",
-                "off_delay_s": "Seconds it has to be gone before it counts as stopped. Empty: 120 for pumps, 0 for the rest."
+                "off_delay_s": "Seconds it has to be gone before it counts as stopped. Empty: 120 for pumps, 0 for the rest. The burner always stops at once."
               }
             }
           }
@@ -342,7 +344,8 @@
       },
       "error": {
         "name_required": "Enter a name.",
-        "not_positive": "Enter a number greater than 0."
+        "not_positive": "Enter a number greater than 0.",
+        "last_burner": "This is the only burner, and the power meter is the input: without a burner nothing is counted. Add another burner first."
       },
       "abort": {
         "reconfigure_successful": "Saved. Fuel Ledger is reloaded with the change."
@@ -369,7 +372,8 @@
         "preheater": "Oil preheater",
         "circuit_pump": "Heating circuit pump",
         "hot_water_pump": "Hot water pump",
-        "other": "Other"
+        "other": "Other",
+        "circulation_pump": "Hot water circulation pump"
       }
     }
   },
@@ -394,6 +398,9 @@
     },
     "component_other": {
       "name": "Component"
+    },
+    "component_circulation_pump": {
+      "name": "Hot water circulation pump"
     }
   },
   "entity": {
@@ -514,9 +521,6 @@
     "in_future": {
       "message": "The time is in the future."
     },
-    "before_last_event": {
-      "message": "The time is before the last delivery or stock correction."
-    },
     "too_early": {
       "message": "The time is before Fuel Ledger started counting: there is no consumption for it."
     },
@@ -531,6 +535,12 @@
     },
     "tank_without_dimensions": {
       "message": "{tank} has no dimensions to turn cm into litres: add litres per cm, or enter the reading in litres."
+    },
+    "level_below_amount": {
+      "message": "The stock after the delivery is smaller than the amount delivered. Check both."
+    },
+    "no_burner": {
+      "message": "The power meter is the input, but no component is the burner. Add a component of the kind Burner."
     }
   },
   "services": {
@@ -567,7 +577,8 @@
           "description": "E.g. heating oil EL low sulphur."
         },
         "supplier": {
-          "name": "Supplier"
+          "name": "Supplier",
+          "description": "Who delivered, for your records."
         },
         "time": {
           "name": "Time",
@@ -630,6 +641,12 @@
           "description": "Empty: now."
         }
       }
+    }
+  },
+  "issues": {
+    "components_alike": {
+      "title": "{entry}: two components draw almost the same power",
+      "description": "Behind the power meter, these components draw so alike that Fuel Ledger cannot tell which of them runs: {pairs}.\n\nThe total stays right, and the burner is still counted correctly as long as it is not one of them. Only which of the two shows as running is a guess.\n\nIf you only want the burner's run time, remove one of them. If you know a more exact power for each, enter it with **Edit component**."
     }
   }
 }

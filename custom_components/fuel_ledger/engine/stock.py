@@ -49,6 +49,17 @@ def draw(tanks: Sequence[TankSpec], volumes: Mapping[str, float], litres: float)
         left = (total - litres) / total
         return {k: v * left for k, v in result.items()}
 
+    # What a tank holds above the top of its shape (a capacity larger than its dimensions) stands highest: it goes
+    # first, else the waterline below would leave it standing.
+    excess = {t.id: max(result[t.id] - t.volume(t.height(result[t.id])), 0.0) for t in tanks}
+    if (above := sum(excess.values())) > 0:
+        taken = min(litres, above)
+        for key, value in excess.items():
+            result[key] -= value * taken / above
+        litres -= taken
+        if litres <= 0:
+            return result
+
     def removed(level: float) -> float:
         return sum(max(result[t.id] - t.volume(level), 0.0) for t in tanks)
 
@@ -103,15 +114,21 @@ def reading(
 ) -> tuple[Volumes, frozenset[str]]:
     """The volumes after a reading of one tank, and which tanks are still only assumed.
 
-    Connected at the bottom, the others stand at the same height. Otherwise the others keep their content, unless
-    it was only assumed (a total set or delivered, spread by assumption): then the total stays, and the tanks not
-    read yet share what the reading leaves of it.
+    Connected at the bottom, the others stand at the same height (without dimensions: at the same share of their
+    capacity). Otherwise the others keep their content, unless it was only assumed (a total set or delivered,
+    spread by assumption): then the total stays, and the tanks not read yet share what the reading leaves of it.
+    A reading of a tank that is not there any more changes nothing.
     """
-    tank = next(t for t in tanks if t.id == tank_id)
+    tank = next((t for t in tanks if t.id == tank_id), None)
+    if tank is None:
+        return dict(volumes or {}), assumed
     if link is Link.BOTTOM and _dimensions(tanks):
         level = tank.height(volume)
         return {t.id: volume if t.id == tank_id else t.volume(level) for t in tanks}, frozenset()
-    result = dict(volumes or {})
+    if link is Link.BOTTOM and tank.capacity > 0 and all(t.capacity > 0 for t in tanks):
+        share = volume / tank.capacity
+        return {t.id: volume if t.id == tank_id else t.capacity * share for t in tanks}, frozenset()
+    result = {k: v for k, v in (volumes or {}).items() if any(t.id == k for t in tanks)}
     others = [t for t in tanks if t.id != tank_id and t.id in assumed]
     if others and all(t.id in result for t in tanks):
         known = sum(result[t.id] for t in tanks if t.id != tank_id and t.id not in assumed)
@@ -123,7 +140,7 @@ def reading(
 
 def scale(tanks: Sequence[TankSpec], volumes: Mapping[str, float], total: float) -> Volumes:
     """Volumes with another total, in the same proportion (the rest before a delivery, corrected)."""
-    current = sum(volumes.values())
+    current = sum(volumes.get(t.id, 0.0) for t in tanks)
     if current <= 0:
         return fill(tanks, {}, total)
-    return {k: v * total / current for k, v in volumes.items()}
+    return {t.id: volumes.get(t.id, 0.0) * total / current for t in tanks}

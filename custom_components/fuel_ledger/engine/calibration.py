@@ -70,6 +70,8 @@ def surveys(tanks: Sequence[TankSpec], readings: Sequence[Mapping[str, Any]], ac
             for reading in chosen:
                 tank = by_id[reading["tank"]]
                 height = reading.get("height_cm")
+                if height is None and tank.converts_height:
+                    height = tank.height(reading["volume"])  # read in litres: the height it stands for
                 per_cm = tank.litres_per_cm(height) if height is not None else (tank.per_cm or 0.0)
                 variance += (accuracy_cm * per_cm) ** 2
             result.append(

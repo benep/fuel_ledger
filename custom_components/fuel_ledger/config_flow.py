@@ -110,6 +110,7 @@ ERROR_EFFICIENCY = "efficiency_range"
 ERROR_TOO_MANY_TANKS = "too_many_tanks"
 ERROR_NOT_POWER = "not_power"
 ERROR_BURNER_REQUIRED = "burner_required"
+ERROR_LAST_BURNER = "last_burner"
 
 MAX_TANKS = 10
 
@@ -340,6 +341,7 @@ COMPONENT_FIELDS = {
     ComponentKind.PREHEATER: "preheater_power",
     ComponentKind.CIRCUIT_PUMP: "circuit_pump_power",
     ComponentKind.HOT_WATER_PUMP: "hot_water_pump_power",
+    ComponentKind.CIRCULATION_PUMP: "circulation_pump_power",
 }
 CONF_BURNER_POWER = "burner_power"
 
@@ -851,6 +853,8 @@ class ComponentSubentryFlow(ConfigSubentryFlow):
                     CONF_OFF_DELAY: check.positive(more.get(CONF_OFF_DELAY), SECTION_ACCURACY, zero=True),
                 }
             )
+            if self._reconfiguring and data[CONF_COMPONENT_KIND] != ComponentKind.BURNER and self._last_burner():
+                check.error(CONF_COMPONENT_KIND, ERROR_LAST_BURNER)
             if not check.errors:
                 if self._reconfiguring:
                     return self.async_update_and_abort(
@@ -885,3 +889,16 @@ class ComponentSubentryFlow(ConfigSubentryFlow):
             data_schema=self.add_suggested_values_to_schema(schema, user_input),
             errors=check.errors,
         )
+
+    def _last_burner(self) -> bool:
+        """The power meter is the input and this is its only burner: without it nothing would be counted."""
+        entry = self._get_entry()
+        if entry.options.get(CONF_KIND) != str(InputKind.POWER):
+            return False
+        this = self._get_reconfigure_subentry().subentry_id
+        burners = [
+            s.subentry_id
+            for s in entry.subentries.values()
+            if s.subentry_type == SUBENTRY_COMPONENT and s.data.get(CONF_COMPONENT_KIND) == ComponentKind.BURNER
+        ]
+        return burners == [this]

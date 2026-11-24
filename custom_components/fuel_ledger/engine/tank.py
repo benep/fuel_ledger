@@ -10,6 +10,7 @@ import math
 from bisect import bisect_right
 from dataclasses import dataclass
 from enum import StrEnum
+from itertools import pairwise
 
 
 class Shape(StrEnum):
@@ -113,7 +114,8 @@ def _interpolate(table: tuple[tuple[float, float], ...], h: float) -> float:
 
 def parse_table(text: str) -> tuple[tuple[float, float], ...]:
     """Pairs of cm and litres, one per line or separated by ';': "10: 95", "10 = 95" or "10 95". ValueError if a
-    line has no two numbers, a number is negative, or the heights are not all different."""
+    line has no two numbers, a number is negative, the heights are not all different, or the litres do not rise
+    with the height."""
     pairs: list[tuple[float, float]] = []
     for raw in text.replace(";", "\n").splitlines():
         line = raw.strip()
@@ -127,7 +129,8 @@ def parse_table(text: str) -> tuple[tuple[float, float], ...]:
             raise ValueError(line)
         pairs.append((cm, litres))
     pairs.sort()
-    if not pairs or len({cm for cm, _ in pairs}) != len(pairs):
+    rising = all(v1 > v0 for (_, v0), (_, v1) in pairwise(pairs))
+    if not pairs or len({cm for cm, _ in pairs}) != len(pairs) or not rising:
         raise ValueError(text)
     return tuple(pairs)
 

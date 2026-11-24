@@ -52,17 +52,23 @@ class _Counter:
     """Follows a cumulative reading and returns its increases, by Home Assistant's rules for total_increasing:
 
     - An increase counts in full.
-    - A drop below RESET_FRACTION of the reading before is a reset: the new reading counts in full, from 0.
+    - A drop below RESET_FRACTION of the reading before is a reset: the new reading counts in full, from 0, and a
+      debt is forgotten.
     - A smaller drop is a dip; it is kept as a debt the next increases pay off first.
     - Unavailable (None) or negative: skipped, the next valid reading is compared with the last valid one.
+
+    One exception to Home Assistant: a device that reports 0 for a moment after a restart and then its old reading
+    again. As long as a reset has not counted anything yet, a reading back at or above the one before the reset
+    only counts what it is above it.
     """
 
-    __slots__ = ("debt", "key", "last")
+    __slots__ = ("debt", "key", "last", "reset_from")
 
     def __init__(self, key: str) -> None:
         self.key = key
         self.last: float | None = None
         self.debt = 0.0
+        self.reset_from: float | None = None  # the reading before a reset that has not counted anything yet
 
     def update(self, value: float | None) -> float:
         if value is None or value < 0:
@@ -70,25 +76,33 @@ class _Counter:
         last, self.last = self.last, float(value)
         if last is None:
             return 0.0
-        if self.last < last * RESET_FRACTION:
+        if self.reset_from is not None and self.last >= self.reset_from:
+            increase, self.reset_from = self.last - self.reset_from, None  # only a glitch: back where it was
+        elif self.last < last * RESET_FRACTION:
+            # Back to 0: remember from where, in case it is only a glitch. Anything above 0 counts at once.
+            self.reset_from = (self.reset_from or last) if self.last == 0 else None
+            self.debt = 0.0
             increase = self.last
         elif self.last < last:
             self.debt += last - self.last
             return 0.0
         else:
             increase = self.last - last
+            if increase > 0:
+                self.reset_from = None  # counting from 0 for real
         paid = min(increase, self.debt)
         self.debt -= paid
         return increase - paid
 
     def to_dict(self) -> dict[str, Any]:
-        return {"key": self.key, "last": self.last, "debt": self.debt}
+        return {"key": self.key, "last": self.last, "debt": self.debt, "reset_from": self.reset_from}
 
     def restore(self, stored: Mapping[str, Any]) -> None:
         if stored.get("key") != self.key:
             return  # another input since: it starts over from its next reading
         self.last = None if stored.get("last") is None else float(stored["last"])
         self.debt = float(stored.get("debt") or 0.0)
+        self.reset_from = None if stored.get("reset_from") is None else float(stored["reset_from"])
 
 
 @dataclass
@@ -127,6 +141,7 @@ class Ledger:
         self.running = False  # the burner runs, as far as known
         self._on_since: float | None = None  # burner input: counting from here
         self._prepurge_left = 0.0
+        self._burner_known = True  # False after unavailable: the next "on" is not a start
         # History
         self.checkpoints: list[list[float]] = []  # [time, consumption, nominal]
         self._pruned_hour: int | None = None
@@ -224,6 +239,8 @@ class Ledger:
             raise LedgerError("amount_or_level")
         if (amount is not None and amount <= 0) or (level_after is not None and level_after < 0):
             raise LedgerError("not_positive")
+        if amount is not None and level_after is not None and level_after < amount:
+            raise LedgerError("level_below_amount")
         self._check_time(ts)
         consumption, _ = self._at(ts)
         before = self._state_at(ts, consumption)
@@ -244,6 +261,9 @@ class Ledger:
             "consumption": consumption,
             "amount": amount,
             "amount_entered": amount is not None,
+            # The amount as it looked when entered: the per-litre values of the invoice stay with it if a reading
+            # dated back makes the rest before look as large as the stock after.
+            "amount_at_entry": amount if amount is not None else None if rest is None else level_after - rest,
             "level_after": level_after,
             "level_after_entered": level_after is not None,
             "total_price": total_price,
@@ -493,6 +513,20 @@ class Ledger:
         return worst(self.energy_level, Level.CALCULATED if self.spec.efficiency else Level.ESTIMATED)
 
     @property
+    def co2_level(self) -> Level:
+        known = self.co2_origin is not Origin.DEFAULT or self.spec.co2 is not None
+        return worst(self.consumption_level, Level.CALCULATED if known else Level.ESTIMATED)
+
+    @property
+    def cost_level(self) -> Level | None:
+        """The price is what the invoices say: the cost is as good as the consumption, once a price is known."""
+        return None if self.price is None else self.consumption_level
+
+    def range_level(self, ts: float) -> Level | None:
+        stock = self.stock_level
+        return None if stock is None or self.daily_use(ts) is None else worst(stock, self.consumption_level)
+
+    @property
     def stock_level(self) -> Level | None:
         if self.stock is None:
             return None
@@ -569,6 +603,9 @@ class Ledger:
         return self._seq
 
     def _burner(self, ts: float, on: bool | None, *, initial: bool) -> None:
+        # After unavailable the burner may have started long ago: like a burner found running at the start.
+        initial = initial or not self._burner_known
+        self._burner_known = on is not None
         if on and self._on_since is None:
             self._on_since = ts
             if initial:
@@ -628,7 +665,9 @@ class Ledger:
 
     def _events(self) -> list[dict[str, Any]]:
         events = [*self.corrections, *self.deliveries, *self.readings]
-        if self.measurement is not None:
+        # The last measurement only counts while the tanks have their level sensors: once they are gone, the
+        # readings and deliveries since decide again.
+        if self.measurement is not None and self.spec.measured_stock:
             events.append(self.measurement)
         return sorted(events, key=lambda e: (e["time"], e["seq"]))
 
@@ -716,7 +755,7 @@ def _apply(spec: LedgerSpec, state: _Stock, event: dict[str, Any]) -> None:
     kind = event["kind"]
     state.last_event = event
     if kind == KIND_MEASUREMENT:
-        state.volumes = dict(event["volumes"])
+        state.volumes = {t.id: event["volumes"][t.id] for t in tanks if t.id in event["volumes"]}
         state.assumed = frozenset()
     elif kind == KIND_READING:
         state.volumes, state.assumed = reading(
@@ -752,19 +791,20 @@ def _deliver(spec: LedgerSpec, state: _Stock, event: dict[str, Any]) -> None:
         amount = max(level_after - rest, 0.0) if rest is not None else None
         volumes = state.volumes if rest is not None else {}
     before = _values(state, spec)
+    weight = amount or event.get("amount_at_entry")  # never 0: a total on the invoice is for a real amount
 
     def per_litre(total: float | None) -> float | None:
-        return None if total is None or not amount else total / amount
+        return None if total is None or not weight else total / weight
 
     price, heating_value, co2 = per_litre(event["total_price"]), per_litre(event["energy"]), per_litre(event["co2"])
     if price is not None:
-        state.price, state.price_origin = _blend(state.price, price, rest, amount), Origin.DELIVERY
+        state.price, state.price_origin = _blend(state.price, price, rest, weight), Origin.DELIVERY
     if heating_value is not None:
         old = state.heating_value if state.heating_value is not None else spec.default_heating_value
-        state.heating_value, state.heating_value_origin = _blend(old, heating_value, rest, amount), Origin.DELIVERY
+        state.heating_value, state.heating_value_origin = _blend(old, heating_value, rest, weight), Origin.DELIVERY
     if co2 is not None:
         old = state.co2 if state.co2 is not None else spec.default_co2
-        state.co2, state.co2_origin = _blend(old, co2, rest, amount), Origin.DELIVERY
+        state.co2, state.co2_origin = _blend(old, co2, rest, weight), Origin.DELIVERY
     if amount is not None and volumes is not None:
         state.volumes = fill(tanks, volumes, amount)
     else:

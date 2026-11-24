@@ -11,6 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import issue_registry as ir
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
 from custom_components.fuel_ledger.const import (
@@ -361,3 +362,49 @@ async def test_tanks_on_a_t_piece_each_with_their_content(hass: HomeAssistant, f
     assert value(hass, "sensor.left_content") == pytest.approx(320.0)
     assert value(hass, "sensor.right_content") == pytest.approx(880.0 - 10 * FLOW, abs=0.01)
     assert value(hass, "sensor.left_level") == pytest.approx(40.0)
+
+
+async def test_power_meter_unavailable_stops_the_burner_and_its_return_is_no_start(hass: HomeAssistant, freezer):
+    hass.states.async_set(POWER, "184", {"unit_of_measurement": "W"})
+    await setup(
+        hass,
+        {CONF_ENTITY: POWER, CONF_KIND: "power", CONF_NOZZLE_GPH: GPH, CONF_BASE_POWER: 4.0},
+        subentries=COMPONENTS,
+    )
+    freezer.tick(timedelta(minutes=6))
+    hass.states.async_set(POWER, "unavailable")
+    await tick(hass, freezer, minutes=60)  # an hour without the meter: nothing is booked for it
+    assert value(hass, "sensor.heating_oil_burner_run_time") == pytest.approx(0.1, abs=1e-3)
+    assert hass.states.get("binary_sensor.burner").state == "unknown"
+    hass.states.async_set(POWER, "184", {"unit_of_measurement": "W"})
+    await tick(hass, freezer, minutes=6)
+    assert value(hass, "sensor.heating_oil_burner_run_time") == pytest.approx(0.2, abs=1e-3)
+    assert hass.states.get("binary_sensor.burner").state == "on"
+
+
+async def test_components_too_alike_raise_a_repair_note(hass: HomeAssistant):
+    hass.states.async_set(POWER, "4", {"unit_of_measurement": "W"})
+    twin = component("circ", "Circulation pump", "circulation_pump", 43.0)
+    entry = await setup(
+        hass,
+        {CONF_ENTITY: POWER, CONF_KIND: "power", CONF_NOZZLE_GPH: GPH, CONF_BASE_POWER: 4.0},
+        subentries=[*COMPONENTS, twin],
+    )
+    issue = ir.async_get(hass).async_get_issue(DOMAIN, f"components_alike_{entry.entry_id}")
+    assert issue is not None
+    assert "Circulation pump (43 W)" in issue.translation_placeholders["pairs"]
+    assert hass.states.get("binary_sensor.circulation_pump") is not None
+
+
+async def test_power_input_without_a_burner_does_not_load(hass: HomeAssistant):
+    hass.states.async_set(POWER, "4", {"unit_of_measurement": "W"})
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Heating oil",
+        options={CONF_ENTITY: POWER, CONF_KIND: "power", CONF_NOZZLE_GPH: GPH},
+        subentries_data=COMPONENTS[1:],
+    )
+    entry.add_to_hass(hass)
+    assert not await hass.config_entries.async_setup(entry.entry_id)
+    assert entry.state is ConfigEntryState.SETUP_ERROR
+    assert "no component is the burner" in (entry.reason or "")

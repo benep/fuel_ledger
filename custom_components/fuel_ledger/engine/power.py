@@ -24,6 +24,7 @@ class ComponentKind(StrEnum):
     PREHEATER = "preheater"
     CIRCUIT_PUMP = "circuit_pump"
     HOT_WATER_PUMP = "hot_water_pump"
+    CIRCULATION_PUMP = "circulation_pump"
     OTHER = "other"
 
 
@@ -33,9 +34,25 @@ DEFAULT_DELAYS: dict[ComponentKind, tuple[float, float]] = {
     ComponentKind.PREHEATER: (0.0, 0.0),
     ComponentKind.CIRCUIT_PUMP: (60.0, 120.0),
     ComponentKind.HOT_WATER_PUMP: (60.0, 120.0),
+    ComponentKind.CIRCULATION_PUMP: (60.0, 120.0),
     ComponentKind.OTHER: (0.0, 0.0),
 }
 MAX_COMPONENTS = 8
+# Two components closer than this cannot be told apart: in W, and as a share of the larger one.
+ALIKE_W = 5.0
+ALIKE_SHARE = 0.1
+
+
+def alike(spec: PowerSpec) -> list[tuple[ComponentSpec, ComponentSpec]]:
+    """Pairs of components whose typical powers are too close to tell which one runs. The total stays right; which
+    of the two gets it is a guess."""
+    found = []
+    parts = spec.components[:MAX_COMPONENTS]
+    for i, first in enumerate(parts):
+        for second in parts[i + 1 :]:
+            if abs(first.power - second.power) < max(ALIKE_W, ALIKE_SHARE * max(first.power, second.power)):
+                found.append((first, second))
+    return found
 
 
 @dataclass(frozen=True)
@@ -49,11 +66,12 @@ class ComponentSpec:
 
     @property
     def delays(self) -> tuple[float, float]:
+        """(on, off). The burner stops at once: its run time is booked as it goes, a stop confirmed later would
+        come after time that was booked already."""
         on, off = DEFAULT_DELAYS[self.kind]
-        return (
-            on if self.on_delay_s is None else self.on_delay_s,
-            off if self.off_delay_s is None else self.off_delay_s,
-        )
+        on = on if self.on_delay_s is None else self.on_delay_s
+        off = off if self.off_delay_s is None else self.off_delay_s
+        return on, 0.0 if self.kind is ComponentKind.BURNER else off
 
 
 @dataclass(frozen=True)
@@ -70,8 +88,9 @@ class PowerSpec:
 @dataclass(frozen=True)
 class Change:
     component: str
-    on: bool
+    on: bool | None  # None: unknown, the meter is unavailable
     time: float  # when the change began
+    initial: bool = False  # the first state after unknown: not a switch, it may have been on for long
 
 
 class Disaggregator:
@@ -84,13 +103,14 @@ class Disaggregator:
         self._combinations = self._all_combinations()
 
     def update(self, ts: float, watts: float | None) -> list[Change]:
-        """A new measurement; None while the meter is unavailable (every component unknown)."""
+        """A new measurement; None while the meter is unavailable (every component unknown, reported as a change)."""
         self.watts = watts
         if watts is None:
+            changes = [Change(k, None, ts) for k, v in self.state.items() if v is not None]
             self.raw = {}
             self._since = {}
             self.state = dict.fromkeys(self.state)
-            return []
+            return changes
         running = self._match(watts)
         for component in self.spec.components:
             on = component.id in running
@@ -108,7 +128,9 @@ class Disaggregator:
                 continue
             since = self._since[component.id]
             if self.state[component.id] is None:
-                self.state[component.id] = raw  # the first measurement: no change to confirm
+                # The first measurement, or the first after unknown: no switch to confirm, the state as it is.
+                self.state[component.id] = raw
+                changes.append(Change(component.id, raw, ts, initial=True))
                 continue
             on_delay, off_delay = component.delays
             if ts - since >= (on_delay if raw else off_delay):

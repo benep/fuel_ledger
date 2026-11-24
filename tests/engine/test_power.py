@@ -10,6 +10,7 @@ from custom_components.fuel_ledger.engine.power import (
     ComponentSpec,
     Disaggregator,
     PowerSpec,
+    alike,
 )
 
 BURNER = ComponentSpec("burner", "Burner", ComponentKind.BURNER, 180.0)
@@ -72,9 +73,53 @@ def test_power_of_each_component():
     assert power.power("circuit") == pytest.approx(48.0)
 
 
-def test_unavailable_meter():
+def test_unavailable_meter_reports_unknown_and_then_the_state_as_found():
     power = Disaggregator(FULL)
     power.update(0.0, 184.0)
-    assert power.update(10.0, None) == []
+    changes = power.update(10.0, None)
+    assert Change("burner", None, 10.0) in changes
+    assert all(c.on is None for c in changes)
     assert power.state["burner"] is None
     assert power.power("burner") is None
+    # Back: the burner is taken as found, not as a start (it may have run all along).
+    assert Change("burner", True, 20.0, initial=True) in power.update(20.0, 184.0)
+    assert power.update(30.0, None)[0].on is None
+    assert power.update(40.0, None) == []  # nothing new to report
+
+
+def test_the_first_measurement_reports_each_component_as_found():
+    power = Disaggregator(FULL)
+    changes = power.update(0.0, 49.0)
+    assert Change("circuit", True, 0.0, initial=True) in changes
+    assert Change("burner", False, 0.0, initial=True) in changes
+
+
+def test_the_burner_stops_at_once_even_with_an_off_delay():
+    burner = ComponentSpec("burner", "Burner", ComponentKind.BURNER, 180.0, on_delay_s=5, off_delay_s=60)
+    assert burner.delays == (5, 0.0)
+
+
+CIRCULATION = ComponentSpec("circ", "Circulation pump", ComponentKind.CIRCULATION_PUMP, 25.0)
+
+
+def test_a_circulation_pump_is_one_more_component():
+    power = Disaggregator(PowerSpec("sensor.power", base=4.0, components=(BURNER, CIRCUIT, CIRCULATION)))
+    for watts, running in [
+        (29.0, {"circ"}),
+        (49.0, {"circuit"}),
+        (74.0, {"circuit", "circ"}),
+        (209.0, {"burner", "circ"}),
+        (254.0, {"burner", "circuit", "circ"}),
+    ]:
+        power.update(0.0, watts)
+        assert {k for k, on in power.raw.items() if on} == running, watts
+    assert CIRCULATION.delays == (60.0, 120.0)
+
+
+def test_components_too_alike_to_tell_apart():
+    assert alike(FULL) == []
+    twin = ComponentSpec("circ", "Circulation pump", ComponentKind.CIRCULATION_PUMP, 42.0)
+    assert alike(PowerSpec("sensor.power", components=(BURNER, CIRCUIT, twin))) == [(CIRCUIT, twin)]
+    small = ComponentSpec("small", "Small", ComponentKind.OTHER, 2.0)
+    tiny = ComponentSpec("tiny", "Tiny", ComponentKind.OTHER, 6.0)
+    assert alike(PowerSpec("sensor.power", components=(small, tiny))) == [(small, tiny)]  # within 5 W

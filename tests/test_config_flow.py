@@ -297,3 +297,26 @@ async def test_component_subentry(hass: HomeAssistant):
     pump = next(s for s in entry.subentries.values() if s.subentry_type == SUBENTRY_COMPONENT)
     assert pump.data == {CONF_COMPONENT_KIND: "circuit_pump", CONF_POWER: 45, "on_delay_s": 90}
     await hass.async_block_till_done()
+
+
+async def test_the_only_burner_of_a_power_input_keeps_its_kind(hass: HomeAssistant):
+    flow_id = await start(hass)
+    await hass.config_entries.flow.async_configure(flow_id, {CONF_ENTITY: POWER})
+    await hass.config_entries.flow.async_configure(
+        flow_id, {"burner_power": 180, ACCURACY: {"circulation_pump_power": 25}}
+    )
+    await hass.config_entries.flow.async_configure(flow_id, {CONF_NOZZLE_GPH: 0.5})
+    result = await hass.config_entries.flow.async_configure(flow_id, {"tank_count": 0})
+    entry = result["result"]
+    await hass.async_block_till_done()
+    kinds = {s.data[CONF_COMPONENT_KIND]: s for s in entry.subentries.values()}
+    assert set(kinds) == {"burner", "circulation_pump"}
+    assert kinds["circulation_pump"].title == "Hot water circulation pump"
+    result = await hass.config_entries.subentries.async_init(
+        (entry.entry_id, SUBENTRY_COMPONENT),
+        context={"source": SOURCE_RECONFIGURE, "subentry_id": kinds["burner"].subentry_id},
+    )
+    result = await hass.config_entries.subentries.async_configure(
+        result["flow_id"], {"name": "Burner", CONF_COMPONENT_KIND: "other", CONF_POWER: 180}
+    )
+    assert result["errors"] == {CONF_COMPONENT_KIND: "last_burner"}

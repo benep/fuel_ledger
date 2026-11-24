@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, Supp
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.util import dt as dt_util
@@ -38,8 +39,9 @@ from .const import (
     SERVICE_SET_STOCK,
     STORAGE_VERSION,
 )
-from .engine import LedgerError
-from .model import build_spec
+from .engine import LedgerError, LedgerSpec
+from .engine.power import alike
+from .model import NoBurnerError, build_spec
 from .runtime import FuelLedgerRuntime, store_key
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.NUMBER, Platform.SENSOR]
@@ -199,8 +201,11 @@ def _book(event: Any) -> dict[str, Any]:
 async def async_setup_entry(hass: HomeAssistant, entry: FuelLedgerConfigEntry) -> bool:
     try:
         spec = build_spec(entry.options, entry.subentries.values())
+    except NoBurnerError as err:
+        raise ConfigEntryError(translation_domain=DOMAIN, translation_key="no_burner") from err
     except (KeyError, TypeError, ValueError) as err:
         raise ConfigEntryError(f"Invalid configuration: {err}") from err
+    _check_components(hass, entry, spec)
 
     runtime = FuelLedgerRuntime(hass, entry, spec)
     await runtime.async_start()
@@ -221,6 +226,31 @@ async def async_unload_entry(hass: HomeAssistant, entry: FuelLedgerConfigEntry) 
 
 async def async_remove_entry(hass: HomeAssistant, entry: FuelLedgerConfigEntry) -> None:
     await Store(hass, STORAGE_VERSION, store_key(entry.entry_id)).async_remove()
+    ir.async_delete_issue(hass, DOMAIN, _alike_issue(entry.entry_id))
+
+
+def _alike_issue(entry_id: str) -> str:
+    return f"components_alike_{entry_id}"
+
+
+def _check_components(hass: HomeAssistant, entry: FuelLedgerConfigEntry, spec: LedgerSpec) -> None:
+    """A repair note while two components behind the power meter draw so alike that it cannot tell them apart."""
+    pairs = alike(spec.power) if spec.power else []
+    if not pairs:
+        ir.async_delete_issue(hass, DOMAIN, _alike_issue(entry.entry_id))
+        return
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        _alike_issue(entry.entry_id),
+        is_fixable=False,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key="components_alike",
+        translation_placeholders={
+            "entry": entry.title,
+            "pairs": ", ".join(f"{a.name} ({a.power:g} W) / {b.name} ({b.power:g} W)" for a, b in pairs),
+        },
+    )
 
 
 async def _async_reload(hass: HomeAssistant, entry: FuelLedgerConfigEntry) -> None:

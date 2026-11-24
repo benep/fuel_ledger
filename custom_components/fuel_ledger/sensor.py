@@ -154,7 +154,7 @@ SENSORS: tuple[FuelSensorDescription, ...] = (
     _counter(
         KEY_CO2,
         lambda ledger: ledger.co2,
-        "consumption_level",
+        "co2_level",
         device_class=SensorDeviceClass.WEIGHT,
         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
         suggested_display_precision=1,
@@ -166,6 +166,7 @@ SENSORS: tuple[FuelSensorDescription, ...] = (
         state_class=SensorStateClass.TOTAL,
         suggested_display_precision=2,
         value=lambda r: r.ledger.cost,
+        attributes=lambda ledger: _level(ledger.cost_level),
         unit=lambda currency: currency,
     ),
     FuelSensorDescription(
@@ -205,6 +206,7 @@ SENSORS: tuple[FuelSensorDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         suggested_display_precision=1,
         value=lambda r: r.ledger.fill_percent,
+        attributes=lambda ledger: _level(ledger.stock_level),
         exists=lambda spec: bool(spec.capacity),
     ),
     FuelSensorDescription(
@@ -215,12 +217,14 @@ SENSORS: tuple[FuelSensorDescription, ...] = (
         native_unit_of_measurement=UnitOfTime.DAYS,
         suggested_display_precision=0,
         value=lambda r: r.ledger.range_days(r.now()),
+        attributes=lambda ledger: _level(ledger.range_level(ledger.time or 0.0)),
     ),
     FuelSensorDescription(
         key=KEY_EMPTY,
         translation_key=KEY_EMPTY,
         device_class=SensorDeviceClass.TIMESTAMP,
         value=_empty,
+        attributes=lambda ledger: _level(ledger.range_level(ledger.time or 0.0)),
     ),
     FuelSensorDescription(
         key=KEY_PRICE,
@@ -410,6 +414,7 @@ class ComponentPowerSensor(FuelLedgerEntity, SensorEntity):
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = UnitOfPower.WATT
     _attr_suggested_display_precision = 0
+    _follows_power = True
 
     def __init__(self, runtime: FuelLedgerRuntime, component_id: str, device: Any) -> None:
         super().__init__(runtime, component_id, KEY_COMPONENT_POWER, device)

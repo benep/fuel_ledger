@@ -40,6 +40,7 @@ class FuelLedgerEntity(Entity):
 
     _attr_has_entity_name = True
     _attr_should_poll = False
+    _follows_power = False  # also written after every measurement of the power meter
 
     def __init__(self, runtime: FuelLedgerRuntime, owner_id: str, key: str, device: DeviceInfo) -> None:
         self.runtime = runtime
@@ -49,7 +50,7 @@ class FuelLedgerEntity(Entity):
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
-        self.async_on_remove(self.runtime.async_add_listener(self.async_write_ha_state))
+        self.async_on_remove(self.runtime.async_add_listener(self.async_write_ha_state, power=self._follows_power))
 
 
 def component_device(subentry: ConfigSubentry, models: dict[str, str]) -> DeviceInfo:

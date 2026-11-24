@@ -13,6 +13,7 @@ from custom_components.fuel_ledger.engine import (
     Level,
     Link,
     Origin,
+    Shape,
     TankSpec,
     nozzle_flow,
 )
@@ -521,3 +522,111 @@ def test_after_a_delivery_on_a_t_piece_the_readings_divide_it():
     assert book.tank_volume("right") == pytest.approx(930.0)
     book.record_level(0.0, "right", "front", height_cm=110.0)
     assert book.stock == pytest.approx(1200.0)
+
+
+# --- Found in review ---------------------------------------------------------------------------------------------
+
+
+def test_a_counter_back_at_0_for_a_moment_counts_only_what_it_rose():
+    book = ledger()
+    book.observe(H, 0.0)  # a device reporting 0 right after its restart
+    book.observe(2 * H, 0.0)
+    book.observe(3 * H, 101.0)  # back at its reading: only the hour it ran
+    assert book.runtime_h == pytest.approx(1.0)
+
+
+def test_a_real_reset_counts_from_0_and_forgets_a_debt():
+    book = ledger()
+    book.observe(H, 95.0)  # a dip of 5 h: a debt
+    book.observe(2 * H, 0.0)  # a new counter
+    book.observe(3 * H, 3.0)
+    assert book.runtime_h == pytest.approx(3.0)
+    book.observe(4 * H, 100.0)  # far above the old reading now: just counting on
+    assert book.runtime_h == pytest.approx(100.0)
+
+
+def test_a_burner_back_from_unavailable_is_not_a_new_start():
+    book = ledger(BurnerSpec(InputKind.BURNER, "b", nominal_flow=FLOW, prepurge_s=12.0))
+    book.observe(0.0, True)
+    book.observe(H, None)
+    book.observe(H + 60, True)
+    book.observe(2 * H, False)
+    assert book.starts == 1
+    assert book.runtime_h == pytest.approx(1.0 + (H - 60) / H - 12 / H)
+
+
+def test_a_stock_after_below_the_amount_is_refused():
+    book = ledger()
+    with pytest.raises(LedgerError, match="level_below_amount"):
+        book.record_delivery(0.0, amount=800.0, level_after=300.0)
+
+
+def test_a_reading_dated_back_keeps_the_price_of_a_delivery_after_it():
+    book = ledger(tanks=TANKS[:1])
+    book.set_stock(0.0, 100.0, price=1.0)
+    book.close_interval(0.0)
+    run(book, H, 1.0)
+    book.close_interval(H)
+    book.record_delivery(H, level_after=900.0, total_price=800.0)  # 802 L for 800 €
+    assert book.price == pytest.approx((98 * 1.0 + 800.0) / 900)
+    book.record_level(0.0, "left", "front", volume=950.0)  # entered later, dated before: more than after it
+    assert book.price is not None
+    assert book.price == pytest.approx(800.0 / 802.0, abs=0.01)
+
+
+def test_events_of_a_removed_tank_are_left_out():
+    book = ledger(tanks=TANKS)
+    book.record_level(0.0, "left", "front", volume=300.0)
+    book.record_level(0.0, "right", "front", volume=500.0)
+    copy = Ledger.from_dict(LedgerSpec(burner=RUNTIME, tanks=TANKS[:1]), book.to_dict())
+    assert copy.stock == pytest.approx(300.0)
+
+
+def test_the_last_measurement_does_not_count_once_the_level_sensors_are_gone():
+    tanks = tuple(TankSpec(t.id, t.name, t.capacity, per_cm=8.0, level_key=f"sensor.{t.id}") for t in TANKS)
+    book = ledger(tanks=tanks)
+    book.set_stock(0.0, 1000.0)
+    book.measure_stock(0.0, {"left": 300.0, "right": 300.0})
+    assert book.stock == pytest.approx(600.0)
+    copy = Ledger.from_dict(LedgerSpec(burner=RUNTIME, tanks=TANKS), book.to_dict())
+    assert copy.stock == pytest.approx(1000.0)
+
+
+def test_a_tank_fuller_than_its_shape_gives_the_rest_first():
+    cylinder = TankSpec("c", "C", 1200.0, Shape.HORIZONTAL_CYLINDER, diameter_cm=100.0, length_cm=150.0)
+    book = ledger(tanks=(cylinder,))
+    book.set_stock(0.0, 1190.0)
+    run(book, H, 0.5)  # 1 L
+    assert book.stock == pytest.approx(1189.0)
+
+
+def test_connected_at_the_bottom_without_dimensions_by_share_of_capacity():
+    tanks = (TankSpec("a", "A", 1000.0), TankSpec("b", "B", 500.0))
+    book = ledger(tanks=tanks, link=Link.BOTTOM)
+    book.record_level(0.0, "a", "front", volume=400.0)
+    assert book.tank_volume("b") == pytest.approx(200.0)
+
+
+def test_a_reading_in_litres_has_the_uncertainty_of_its_height():
+    book = ledger(tanks=TANKS)
+    book.record_level(0.0, "left", "front", volume=320.0)
+    book.record_level(0.0, "right", "front", volume=880.0)
+    run(book, 50 * H, 50.0)
+    book.close_interval(50 * H)
+    book.record_level(50 * H, "left", "front", volume=264.0)
+    book.record_level(50 * H, "right", "front", volume=824.0)
+    measured = book.measured_factor()
+    assert measured is not None
+    assert measured.uncertainty > 0
+
+
+def test_cost_co2_and_range_state_their_level():
+    book = ledger(tanks=TANKS)
+    assert book.cost_level is None
+    assert book.co2_level is Level.ESTIMATED
+    book.set_stock(0.0, 1000.0, price=1.0, co2=2.7)
+    assert book.cost_level is Level.ESTIMATED  # as good as the consumption
+    assert book.co2_level is Level.ESTIMATED
+    book.set_factor(0.0, 1.1, Origin.MEASURED)
+    assert book.co2_level is Level.CALCULATED
+    assert book.range_level(0.0) is None  # no day of consumption yet

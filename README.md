@@ -9,7 +9,9 @@ in Home Assistant.**
 Integration selbst ist übersetzt.
 
 [![Release](https://img.shields.io/github/v/release/benep/fuel_ledger?include_prereleases&label=release)](https://github.com/benep/fuel_ledger/releases)
-[![License](https://img.shields.io/github/license/benep/fuel_ledger)](LICENSE)
+[![Home Assistant 2026.10 or newer](https://img.shields.io/badge/Home%20Assistant-2026.10%2B-41BDF5?logo=homeassistant&logoColor=white)](#what-you-need)
+[![Help pages in English and German](https://img.shields.io/badge/help-English%20%7C%20Deutsch-orange)](https://benep.github.io/fuel_ledger/)
+[![Tests](https://github.com/benep/fuel_ledger/actions/workflows/tests.yml/badge.svg)](https://github.com/benep/fuel_ledger/actions/workflows/tests.yml)
 
 Most oil heatings have no meter. Fuel Ledger works out the consumption from what Home Assistant already knows about
 your burner: a run time counter, an on/off sensor, or just a smart plug that measures the power of the boiler. It keeps

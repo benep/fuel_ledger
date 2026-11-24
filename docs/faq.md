@@ -72,6 +72,12 @@
 
     Yes, with **Add tank** on the integration page. Its content is unknown until you read it or set the stock again.
 
+??? question "How do I remove Fuel Ledger?"
+
+    **Settings → Devices & services → Fuel Ledger**, the three dots, **Delete**. Its sensors and devices disappear,
+    their history stays. Remove its entries from the Energy dashboard by hand, it keeps them and reports them as
+    missing. Then remove Fuel Ledger in the Marketplace: open it there and choose **Uninstall**.
+
 ## Help
 
 ??? question "Something is wrong. What should I send?"

@@ -13,6 +13,8 @@ sind.
     - **Zwei Peilungen** messen den Korrekturfaktor.
     - **Nichts ändert sich rückwirkend**: Neue Werte gelten ab dem Moment, in dem sie gesetzt werden.
 
+![Von der Laufzeit des Brenners zu Litern, Energie, Wärme, Kosten und CO₂, gebucht gegen die Tanks](assets/diagrams/books.svg){ .diagram }
+
 ## Von der Laufzeit zu den Litern
 
 Ein einstufiger Brenner verbrennt in jeder Stunde, die er läuft, dieselbe Menge Öl. Diese Menge steht auf seiner Düse,

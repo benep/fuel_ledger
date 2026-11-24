@@ -11,6 +11,8 @@ You do not need to read this page to use Fuel Ledger. It helps to understand why
     - **Two dipstick readings** measure the correction factor.
     - **Nothing changes backwards**: new values count from the moment they are set.
 
+![From the run time of the burner to litres, energy, heat, cost and CO₂, booked against the tanks](assets/diagrams/books.svg){ .diagram }
+
 ## From run time to litres
 
 A burner with one stage burns the same amount of oil every hour it runs. That amount is stamped on its nozzle, in US

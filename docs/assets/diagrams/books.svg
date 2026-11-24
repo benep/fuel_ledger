@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="Roboto, 'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa3ad"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="818" height="398" rx="14" fill="#f7f8fa" stroke="#e2e5ea"/>
+  <text x="410" y="38" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">From the burner's run time to litres, kWh and euros, booked against the tanks</text>
+
+  <!-- Burner -->
+  <rect x="24" y="110" width="150" height="90" rx="10" fill="#fff" stroke="#c9ced6"/>
+  <text x="99" y="142" text-anchor="middle" font-size="14" fill="#666">Burner ran</text>
+  <text x="99" y="176" text-anchor="middle" font-size="24" font-weight="bold" fill="#e4572e">3 h</text>
+  <line x1="176" y1="155" x2="212" y2="155" stroke="#9aa3ad" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Consumption -->
+  <rect x="216" y="95" width="200" height="120" rx="10" fill="#fff4e6" stroke="#f4a261" stroke-width="1.5"/>
+  <text x="316" y="127" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Consumption</text>
+  <text x="316" y="161" text-anchor="middle" font-size="24" font-weight="bold" fill="#e07a1f">6.2 L</text>
+  <text x="316" y="187" text-anchor="middle" font-size="12" fill="#666">3 h × 1.89 L/h × 1.10</text>
+  <text x="316" y="204" text-anchor="middle" font-size="11" fill="#888">run time × nozzle × factor</text>
+
+  <g stroke="#9aa3ad" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <path d="M418 155 C440 155 440 82 462 82"/>
+    <path d="M418 155 C440 155 440 132 462 132"/>
+    <path d="M418 155 C440 155 440 182 462 182"/>
+    <path d="M418 155 C440 155 440 232 462 232"/>
+  </g>
+
+  <!-- Results -->
+  <g font-size="14" font-weight="bold" fill="#333">
+    <text x="470" y="80">Energy</text>
+    <text x="470" y="130">Heat</text>
+    <text x="470" y="180">Cost</text>
+    <text x="470" y="230">CO₂</text>
+  </g>
+  <g font-size="12" fill="#666">
+    <text x="470" y="97">× 10 kWh/L heating value</text>
+    <text x="470" y="147">× 0.9 efficiency of the boiler</text>
+    <text x="470" y="197">× €1.00/L price in the tanks</text>
+    <text x="470" y="247">× 2.66 kg/L</text>
+  </g>
+  <g font-size="18" font-weight="bold" fill="#2a9d8f" text-anchor="end">
+    <text x="796" y="90">62 kWh</text>
+    <text x="796" y="140">56 kWh</text>
+    <text x="796" y="190">€6.20</text>
+    <text x="796" y="240">16.5 kg</text>
+  </g>
+
+  <!-- Tanks -->
+  <line x1="316" y1="217" x2="316" y2="268" stroke="#9aa3ad" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="326" y="248" font-size="12" fill="#666">− 6.2 L</text>
+  <rect x="216" y="272" width="200" height="72" rx="10" fill="#fff" stroke="#c9ced6"/>
+  <text x="316" y="300" text-anchor="middle" font-size="14" fill="#666">Stock in the tanks</text>
+  <text x="316" y="330" text-anchor="middle" font-size="22" font-weight="bold" fill="#333">2,694 L</text>
+
+  <rect x="24" y="272" width="150" height="72" rx="10" fill="#fff" stroke="#c9ced6"/>
+  <text x="99" y="300" text-anchor="middle" font-size="14" fill="#666">Delivery</text>
+  <text x="99" y="328" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">+1,800 L</text>
+  <line x1="176" y1="308" x2="212" y2="308" stroke="#9aa3ad" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="462" y="272" width="334" height="72" rx="10" fill="#fff" stroke="#c9ced6"/>
+  <text x="629" y="300" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Dipstick reading</text>
+  <text x="629" y="324" text-anchor="middle" font-size="12.5" fill="#555">sets the tank right and measures the factor</text>
+  <line x1="460" y1="308" x2="420" y2="308" stroke="#9aa3ad" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="410" y="372" text-anchor="middle" font-size="13" fill="#555">A delivery brings its own price, heating value and CO₂, blended with what was left in the tanks.</text>
+  <text x="410" y="390" text-anchor="middle" font-size="13" fill="#555">The factor starts at 1; two readings a few weeks apart measure it. An oil meter replaces the calculation.</text>
+</svg>

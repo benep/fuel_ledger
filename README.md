@@ -1,5 +1,7 @@
 # Fuel Ledger
 
+<img src="https://raw.githubusercontent.com/benep/fuel_ledger/main/custom_components/fuel_ledger/brand/icon@2x.png" alt="Fuel Ledger logo" width="112" align="right">
+
 **Keep the books for your heating oil: how much the burner uses, what is left in the tanks, and what it costs, right
 in Home Assistant.**
 
@@ -14,7 +16,9 @@ your burner: a run time counter, an on/off sensor, or just a smart plug that mea
 track of every tank, blends the price of each delivery with what was left, and corrects itself with the readings you
 take with a dipstick.
 
-Step-by-step help: in [English](https://benep.github.io/fuel_ledger/) and in
+![The Fuel Ledger device: consumption, energy, cost, stock, range and the other sensors at a glance](https://raw.githubusercontent.com/benep/fuel_ledger/main/docs/assets/screenshots/device.png)
+
+Step-by-step help, with pictures: in [English](https://benep.github.io/fuel_ledger/) and in
 [German (Deutsch)](https://benep.github.io/fuel_ledger/de/).
 
 ## What you get
@@ -24,8 +28,6 @@ Step-by-step help: in [English](https://benep.github.io/fuel_ledger/) and in
 - **Deliveries** with the price, heating value and CO₂ from the invoice, blended with what was left in the tanks.
 - **A measured correction factor** from two readings with a dipstick, so the estimate gets better by itself.
 - **The burner and the pumps** as sensors of their own, if a power meter sits in front of the boiler.
-
-![The Fuel Ledger device: consumption, energy, cost, stock, range and the other sensors at a glance](https://raw.githubusercontent.com/benep/fuel_ledger/main/docs/assets/screenshots/device.png)
 
 ## What you need
 
@@ -44,11 +46,14 @@ Assistant 2026.10** or newer.
 
 ## How it works
 
-Consumption = burner run time × nozzle throughput × correction factor. The correction factor starts at 1 and gets
-measured from your dipstick readings. With several tanks joined by a T-piece, the burner draws from the fuller one
-first, and Fuel Ledger follows each tank on its own.
+![The run time of the burner gives the litres, and the litres give energy, heat, cost and CO₂; deliveries and dipstick readings keep the stock in the tanks right](https://raw.githubusercontent.com/benep/fuel_ledger/main/docs/assets/diagrams/books.svg)
 
-More: [How it works](https://benep.github.io/fuel_ledger/how-it-works/).
+Consumption = burner run time × nozzle throughput × correction factor. Each litre is booked against the tanks and
+turned into energy, heat, cost and CO₂ with the values of the oil that is in them. The correction factor starts at 1
+and gets measured from your dipstick readings. With several tanks joined by a T-piece, the burner draws from the
+fuller one first, and Fuel Ledger follows each tank on its own.
+
+More, with pictures: [How it works](https://benep.github.io/fuel_ledger/how-it-works/).
 
 ## An estimate, and honest about it
 

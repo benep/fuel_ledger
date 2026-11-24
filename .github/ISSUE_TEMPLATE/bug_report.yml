@@ -1,0 +1,53 @@
+name: Bug report
+description: Something is wrong or does not work as described.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time. Please check the [questions](https://benep.github.io/fuel_ledger/faq/) first;
+        many surprises in the numbers are explained there.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happens
+      description: What you see, and what you expected instead. A screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to get there
+      description: What you did before, for example a delivery or reading you entered, or a change in the settings.
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      description: Settings → About.
+      placeholder: "2026.10.4"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Fuel Ledger version
+      description: Marketplace → Fuel Ledger.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: >-
+        On the integration page, the three dots, **Download diagnostics**, then drag the file here. It contains your
+        setup, the current state of the entities Fuel Ledger reads and its books (deliveries, readings, counters),
+        nothing else.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log
+      description: Lines with `fuel_ledger` from Settings → System → Logs, if there are any.
+      render: text

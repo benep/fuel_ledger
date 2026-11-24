@@ -91,7 +91,8 @@ Fuel Ledger is in **beta**.
   shows at once, and deliveries from those days can be entered with their real date.
 - **Heating oil only**, for now. The structure is made for more fuels (LPG, pellets, wood).
 - **Litres and centimetres** for tanks and readings. The nozzle is in GPH as stamped on it.
-- **Heat Ledger** splits the heat between your rooms and can take the **Heat** of Fuel Ledger as its source.
+- **[Heat Ledger](https://github.com/benep/heat_ledger)**, the sister integration, splits the heat between your rooms and
+  can take the **Heat** of Fuel Ledger as its source.
 
 ## Help and feedback
 

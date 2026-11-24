@@ -56,6 +56,12 @@
     On purpose. A new heating value, price, factor or efficiency counts from the moment it is set. What was counted
     stays, so the Energy dashboard never jumps.
 
+??? question "Can I see the heat per room?"
+
+    Not with Fuel Ledger alone. Its sister integration [Heat Ledger](https://benep.github.io/heat_ledger/) splits the
+    **Heat** of Fuel Ledger between your rooms and your hot water, with your thermostats.
+    [Energy dashboard](energy-dashboard.md#with-heat-ledger) shows how to connect them.
+
 ## Changing things
 
 ??? question "I entered a wrong reading or delivery."

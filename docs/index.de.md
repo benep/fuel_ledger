@@ -16,7 +16,8 @@ flowchart LR
 
 ## Was du bekommst
 
-- **Zähler für das Energie-Dashboard**: Verbrauch in Litern, Energie und Wärme in kWh, Kosten und CO₂.
+- **Zähler für das Energie-Dashboard**: Verbrauch in Litern, Energie und Wärme in kWh, Kosten und CO₂. Die Wärme
+  kann [Heat Ledger](https://benep.github.io/heat_ledger/de/) speisen, das sie auf deine Räume aufteilt.
 - **Den Vorrat** jedes Tanks und aller zusammen, den Füllgrad, die Reichweite in Tagen und den Tag, an dem die Tanks
   leer sind.
 - **Lieferungen** mit Preis, Heizwert und CO₂ von der Rechnung, gemischt mit dem, was noch in den Tanks war.

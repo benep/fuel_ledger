@@ -16,7 +16,8 @@ flowchart LR
 
 ## What you get
 
-- **Counters for the Energy dashboard**: consumption in litres, energy and heat in kWh, cost and CO₂.
+- **Counters for the Energy dashboard**: consumption in litres, energy and heat in kWh, cost and CO₂. The heat can
+  feed [Heat Ledger](https://benep.github.io/heat_ledger/), which splits it between your rooms.
 - **The stock** of each tank and of all together, the fill level, the range in days and the day the tanks run empty.
 - **Deliveries** with price, heating value and CO₂ from the invoice, blended with what was left in the tanks.
 - **A measured correction factor** from your dipstick readings.

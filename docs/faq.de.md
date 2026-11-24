@@ -58,6 +58,12 @@
     Mit Absicht. Ein neuer Heizwert, Preis, Faktor oder Wirkungsgrad gilt ab dem Moment, in dem er gesetzt wird. Was
     gezählt wurde, bleibt, also springt das Energie-Dashboard nie.
 
+??? question "Kann ich die Wärme pro Raum sehen?"
+
+    Mit Fuel Ledger allein nicht. Die Schwester-Integration [Heat Ledger](https://benep.github.io/heat_ledger/de/)
+    teilt die **Wärme** von Fuel Ledger mit deinen Thermostaten auf deine Räume und dein Warmwasser auf. Wie du beide
+    verbindest, steht unter [Energie-Dashboard](energy-dashboard.md#mit-heat-ledger).
+
 ## Änderungen
 
 ??? question "Ich habe eine falsche Peilung oder Lieferung eingetragen."

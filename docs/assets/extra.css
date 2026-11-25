@@ -1,3 +1,15 @@
+/* Petrol, so the amber drop stands out from the header. */
+:root > * {
+  --md-primary-fg-color: #0f5257;
+  --md-primary-fg-color--light: #1d7a80;
+  --md-primary-fg-color--dark: #0a3a3d;
+}
+
+/* Links on the dark theme need a lighter shade than the header. */
+[data-md-color-scheme="slate"][data-md-color-primary="custom"] {
+  --md-typeset-a-color: #6cc3c3;
+}
+
 /* Diagrams sit on a light card of their own, so they read the same in the light and the dark theme. */
 .md-typeset img.diagram {
   display: block;

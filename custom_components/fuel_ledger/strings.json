@@ -407,6 +407,42 @@
     "binary_sensor": {
       "low": {
         "name": "Low stock"
+      },
+      "running_burner": {
+        "state": {
+          "off": "Idle",
+          "on": "Running"
+        }
+      },
+      "running_preheater": {
+        "state": {
+          "off": "Idle",
+          "on": "Running"
+        }
+      },
+      "running_circuit_pump": {
+        "state": {
+          "off": "Idle",
+          "on": "Running"
+        }
+      },
+      "running_hot_water_pump": {
+        "state": {
+          "off": "Idle",
+          "on": "Running"
+        }
+      },
+      "running_circulation_pump": {
+        "state": {
+          "off": "Idle",
+          "on": "Running"
+        }
+      },
+      "running_other": {
+        "state": {
+          "off": "Idle",
+          "on": "Running"
+        }
       }
     },
     "button": {

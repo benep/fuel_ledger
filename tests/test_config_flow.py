@@ -224,6 +224,16 @@ def test_translations_have_the_same_keys():
     assert keys(json.loads((COMPONENT / "translations" / "de.json").read_text(encoding="utf-8"))) == keys(strings)
 
 
+def test_every_component_kind_names_its_states():
+    """The device class running says "Außer Betrieb" in German, which reads like a fault: own words for each kind."""
+    from custom_components.fuel_ledger.engine.power import ComponentKind
+
+    for name in ("strings.json", "translations/en.json", "translations/de.json"):
+        sensors = json.loads((COMPONENT / name).read_text(encoding="utf-8"))["entity"]["binary_sensor"]
+        for kind in ComponentKind:
+            assert set(sensors[f"running_{kind.value}"]["state"]) == {"on", "off"}, (name, kind)
+
+
 def test_every_action_field_is_translated():
     from homeassistant.util.yaml import load_yaml
 

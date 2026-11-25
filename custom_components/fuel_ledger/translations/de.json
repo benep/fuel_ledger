@@ -407,6 +407,42 @@
     "binary_sensor": {
       "low": {
         "name": "Vorrat niedrig"
+      },
+      "running_burner": {
+        "state": {
+          "off": "Pause",
+          "on": "Läuft"
+        }
+      },
+      "running_preheater": {
+        "state": {
+          "off": "Pause",
+          "on": "Läuft"
+        }
+      },
+      "running_circuit_pump": {
+        "state": {
+          "off": "Pause",
+          "on": "Läuft"
+        }
+      },
+      "running_hot_water_pump": {
+        "state": {
+          "off": "Pause",
+          "on": "Läuft"
+        }
+      },
+      "running_circulation_pump": {
+        "state": {
+          "off": "Pause",
+          "on": "Läuft"
+        }
+      },
+      "running_other": {
+        "state": {
+          "off": "Pause",
+          "on": "Läuft"
+        }
       }
     },
     "button": {

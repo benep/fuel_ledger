@@ -72,13 +72,16 @@ disappear.
 
 ## Install
 
-1. [Add Fuel Ledger to the Marketplace](https://my.home-assistant.io/redirect/marketplace_repository/?owner=benep&repository=fuel_ledger&category=integration)
-   of Home Assistant. By hand: open **Marketplace**, choose **Add from link**, enter
-   `https://github.com/benep/fuel_ledger` and choose the type **Integration**.
-2. Open **Fuel Ledger** there, click **Install** and restart Home Assistant.
-3. Add the integration:
+1. Add Fuel Ledger to the Marketplace of your Home Assistant:
 
-   [![Add Fuel Ledger to Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=fuel_ledger)
+   [![Add Fuel Ledger to the Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=benep&repository=fuel_ledger&category=integration)
+
+   By hand: open **Marketplace**, choose **Add from link**, enter `https://github.com/benep/fuel_ledger` and choose
+   the type **Integration**.
+2. On the page of Fuel Ledger, click **Install**. Added by hand, it is not in the search: open the menu **⋮** and
+   choose **Custom repositories**.
+3. The setup starts by itself. If you closed it,
+   [add the integration again](https://my.home-assistant.io/redirect/config_flow_start/?domain=fuel_ledger).
 
 Every step with its details: [Installation](https://benep.github.io/fuel_ledger/installation/) and
 [Setup](https://benep.github.io/fuel_ledger/setup/).

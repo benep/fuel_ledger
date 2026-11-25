@@ -5,7 +5,7 @@ Seitenleiste.
 
 ```mermaid
 flowchart LR
-    A["1. Fuel Ledger zum<br>Marketplace hinzufügen"] --> B["2. Installieren"] --> C["3. Home Assistant<br>neu starten"] --> D["4. Integration<br>hinzufügen"]
+    A["1. Fuel Ledger zum<br>Marketplace hinzufügen"] --> B["2. Installieren"] --> C["3. Einrichten"]
 ```
 
 ## 1. Fuel Ledger zum Marketplace hinzufügen
@@ -13,7 +13,10 @@ flowchart LR
 Fuel Ledger steht noch nicht im Katalog des Marketplace. Du fügst es deshalb einmal über seinen GitHub-Link hinzu.
 Klicke auf diesen Knopf:
 
-[Fuel Ledger zum Marketplace hinzufügen](https://my.home-assistant.io/redirect/marketplace_repository/?owner=benep&repository=fuel_ledger&category=integration){ .md-button .md-button--primary }
+[![Fuel Ledger zum Marketplace hinzufügen](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=benep&repository=fuel_ledger&category=integration)
+
+Bestätige die Frage **Benutzerdefiniertes Repository hinzufügen**. Danach bist du direkt auf der Seite von Fuel Ledger
+im Marketplace.
 
 Oder von Hand:
 
@@ -29,28 +32,28 @@ Oder von Hand:
 
     Beim ersten Mal fragt Home Assistant, ob du **GitHub verbinden** willst (ein kostenloses Konto genügt). Es zeigt
     dir einen Code; öffne den angezeigten Link, melde dich bei GitHub an und gib den Code dort ein. Dein
-    GitHub-Passwort gibst du nie in Home Assistant ein, und die Verbindung liest nur öffentliche Informationen. Sobald
-    Fuel Ledger im Katalog des Marketplace steht, fällt dieser Schritt weg.
+    GitHub-Passwort gibst du nie in Home Assistant ein, und die Verbindung liest nur öffentliche Informationen. Bist du
+    über den Knopf gekommen, klicke ihn danach noch einmal. Sobald Fuel Ledger im Katalog des Marketplace steht, fällt
+    dieser Schritt weg.
 
 ## 2. Installieren
 
-Öffne **Fuel Ledger** im Marketplace, klicke auf **Installieren** und bestätige.
+Klicke auf der Seite von Fuel Ledger auf **Installieren** und bestätige.
 
-## 3. Home Assistant neu starten
+Hast du Fuel Ledger von Hand hinzugefügt, steht es weder unter **Entdecken** noch in der Suche. Du findest es über das
+Menü **⋮** oben rechts unter **Benutzerdefinierte Repositorys**.
 
-Eine neue Integration findet Home Assistant erst nach einem Neustart. Der Marketplace zeigt dafür direkt nach der
-Installation einen Knopf **Home Assistant neu starten**.
+## 3. Einrichten
 
-## 4. Integration hinzufügen
+Die Einrichtung startet direkt nach der Installation von selbst, ein Neustart ist nicht nötig. Weiter geht es mit der
+[Einrichtung](setup.md).
 
-Klicke auf diesen Knopf, oder gehe zu **Einstellungen → Geräte & Dienste → Integration hinzufügen** und suche nach
-**Fuel Ledger**:
-
-[![Fuel Ledger zu Home Assistant hinzufügen](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=fuel_ledger)
-
-Die Einrichtung startet sofort. Weiter geht es mit der [Einrichtung](setup.md).
+Hast du sie geschlossen, füge die
+[Integration noch einmal hinzu](https://my.home-assistant.io/redirect/config_flow_start/?domain=fuel_ledger): unter
+**Einstellungen → Geräte & Dienste → Integration hinzufügen** mit der Suche nach **Fuel Ledger**.
 
 ??? question "Updates"
 
     Eine neue Version von Fuel Ledger zeigt der Marketplace wie jedes andere Update unter **Einstellungen → Updates**
-    an. Deine Zähler behalten ihren Stand über Updates und Neustarts hinweg.
+    an. Ein Update braucht einen Neustart von Home Assistant; der Marketplace fordert ihn an. Deine Zähler behalten
+    ihren Stand über Updates und Neustarts hinweg.
